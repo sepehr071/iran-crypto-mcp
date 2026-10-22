@@ -14,7 +14,7 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import Field
 
-from .exchanges import EXCHANGES, Exchange
+from .exchanges import EXCHANGES, NAMES_FA, Exchange
 from .http import ApiError
 from .registry import tool
 
@@ -72,6 +72,7 @@ def _view(ex: Exchange, quote: str, row: dict) -> dict:
         last, basis = (bid + ask) / 2, "mid"
     return {
         "exchange": ex.id,
+        "name_fa": NAMES_FA[ex.id],
         f"price_{u}": _px(ex, quote, last),
         "price_basis": basis if last is not None else None,
         f"bid_{u}": _px(ex, quote, bid),
@@ -95,6 +96,7 @@ async def ic_list_exchanges() -> dict:
             {
                 "id": e.id,
                 "name": e.name,
+                "name_fa": NAMES_FA[e.id],
                 "site": e.site,
                 "source_unit": "rial" if e.rial else "toman",
                 "quotes": ["IRT", "USDT"],

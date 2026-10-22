@@ -49,6 +49,8 @@ The same BTC price differs 10x between Rial and Toman exchanges; this server nor
 
 ## Notes
 
+- Every exchange row carries `name_fa`, the exchange's own Persian name (نوبیتکس, والکس, بیت‌پین, رمزینکس, تبدیل, او ام پی فینکس, اکسیر), so Persian answers do not depend on the model spelling them.
+
 - Replies stay under about 15 KB: order books cap at 20 levels, trades at 50, candles at 100, movers at 25.
 - Bid and ask are missing from the Bitpin, Tabdeal, OMPFinex and Exir tickers (use `ic_get_orderbook`); Tabdeal has no volume.
 - Nobitex refuses USDT/IRT candles (its CDN answers HTTP 403, browsers included): use Wallex for those.

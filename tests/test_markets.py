@@ -217,3 +217,11 @@ async def test_upstream_400_names_the_market(client, up):
     up["/v3/orderbook/BTCIRT"] = lambda r: httpx.Response(400, json={"status": "failed"})
     result = await client.call_tool("ic_get_orderbook", {"exchange": "nobitex", "coin": "BTC"})
     assert result.is_error and "ic_list_markets" in result.content[0].text
+
+
+async def test_persian_names_come_with_the_data(client, up):
+    ex = (await client.call_tool("ic_list_exchanges", {})).structured_content["exchanges"]
+    names = {e["id"]: e["name_fa"] for e in ex}
+    assert set(names) == set(exchanges.EXCHANGES) and names["bitpin"] == "بیت‌پین" and names["wallex"] == "والکس"
+    rows = (await client.call_tool("ic_compare_price", {"coin": "BTC"})).structured_content["prices"]
+    assert {p["exchange"]: p["name_fa"] for p in rows} == names

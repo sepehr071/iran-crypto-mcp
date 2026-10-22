@@ -24,6 +24,8 @@ Workflow:
 Units: every IRT price is returned in Toman. Nobitex, Ramzinex and OMPFinex publish Rial; this server divides
 by 10 so exchanges compare directly. USDT markets are in USDT. Field names carry the unit (price_toman, price_usdt).
 Coins are upper-case tickers ('BTC'); quote is 'IRT' (default) or 'USDT'. Data is cached for 15 seconds.
+In Persian answers name each exchange by its `name_fa` field (نوبیتکس, والکس, بیت\u200cپین, رمزینکس, تبدیل,
+او ام پی فینکس, اکسیر) and never spell the names yourself.
 Quotes can differ between exchanges for real reasons (fees, liquidity, stale last trade): check the order book
 before treating a spread as an opportunity. A coin an exchange does not list is an error naming ic_list_markets.
 Public market data only, not financial advice.

@@ -28,6 +28,18 @@ OMP = "https://api.ompfinex.com"
 EXIR = "https://api.exir.io/v2"
 
 
+# each exchange's own Persian name, as its website spells it (agents transliterate them wrongly)
+NAMES_FA = {
+    "nobitex": "نوبیتکس",
+    "wallex": "والکس",
+    "bitpin": "بیت\u200cپین",
+    "ramzinex": "رمزینکس",
+    "tabdeal": "تبدیل",
+    "ompfinex": "او ام پی فینکس",
+    "exir": "اکسیر",
+}
+
+
 def _f(v: Any) -> float | None:
     """Number from a number or numeric string; None for null, '-' or junk."""
     try:
