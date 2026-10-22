@@ -225,3 +225,10 @@ async def test_persian_names_come_with_the_data(client, up):
     assert set(names) == set(exchanges.EXCHANGES) and names["bitpin"] == "بیت‌پین" and names["wallex"] == "والکس"
     rows = (await client.call_tool("ic_compare_price", {"coin": "BTC"})).structured_content["prices"]
     assert {p["exchange"]: p["name_fa"] for p in rows} == names
+
+
+async def test_compare_price_reports_a_blocked_exchange(client, up):
+    up["/v2/ticker/all"] = lambda r: httpx.Response(403, text="<html>blocked</html>")
+    r = (await client.call_tool("ic_compare_price", {"coin": "BTC"})).structured_content
+    assert "403" in r["errors"]["exir"] and "other exchanges" in r["errors"]["exir"].lower()
+    assert "exir" not in {p["exchange"] for p in r["prices"]} and len(r["prices"]) == 6

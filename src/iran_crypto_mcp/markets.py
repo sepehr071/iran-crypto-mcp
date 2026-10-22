@@ -125,7 +125,8 @@ async def ic_compare_price(coin: COIN, quote: QUOTE = "IRT") -> dict:
     """Compare one coin's price on every supported exchange in one call, cheapest first, with the spread.
 
     Prices are normalized to Toman (IRT) or USDT. Use coin='USDT' with quote='IRT' for the Tether rate in Toman.
-    An exchange that is down or does not list the coin appears under `errors`; the rest are still compared.
+    An exchange that is down, blocks the caller's network or does not list the coin appears under `errors`; the rest
+    are still compared. Always tell the user which exchanges are missing and why.
     To check a spread is real, call ic_get_orderbook on the cheapest and the priciest exchange next.
     """
     c, u = _coin(coin), _unit(quote)

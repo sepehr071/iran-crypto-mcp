@@ -222,7 +222,10 @@ def _retry_after(r: httpx.Response) -> float | None:
 def _status_message(r: httpx.Response, host: str) -> str:
     code = r.status_code
     if code == 403:
-        return f"{host} blocked the request (HTTP 403). Try another network or set IRAN_CRYPTO_MCP_PROXY."
+        return (
+            f"{host} blocked the request (HTTP 403): its CDN refuses some networks. The other exchanges are not "
+            "affected. Try another network or set IRAN_CRYPTO_MCP_PROXY to an Iranian HTTP proxy."
+        )
     if code == 429:
         return f"{host} is rate limiting requests (HTTP 429). Wait a minute before retrying."
     if code >= 500:
