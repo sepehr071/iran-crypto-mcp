@@ -342,6 +342,12 @@ Releases: bump the version in `pyproject.toml` and `server.json`, then push a `v
 Unofficial and not affiliated with or endorsed by any exchange. It reads public market data only: no keys, no account
 access, no trading. Prices are informational, not financial advice, and the endpoints can change without notice.
 
+## Author
+
+<a href="https://www.linkedin.com/in/sepehr-radmard"><img src="https://raw.githubusercontent.com/sepehr071/awesome-iran-mcp/main/assets/author-banner.png" alt="Sepehr Radmard: open-source MCP servers for the Iranian web. LinkedIn: linkedin.com/in/sepehr-radmard" width="100%"></a>
+
+Built and maintained by **Sepehr Radmard** (سپهر رادمرد). Connect on [LinkedIn](https://www.linkedin.com/in/sepehr-radmard) or follow [@sepehr071 on GitHub](https://github.com/sepehr071) for more MCP servers for Iranian websites, all listed in [awesome-iran-mcp](https://github.com/sepehr071/awesome-iran-mcp). If this saves you time, a star on the repo helps other people find it.
+
 ## License
 
 [MIT](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE)
