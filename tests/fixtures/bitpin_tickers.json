@@ -1,0 +1,34 @@
+[
+ {
+  "symbol": "BTC_IRT",
+  "price": "22199449579",
+  "daily_change_price": 0.63,
+  "low": "21895000000",
+  "high": "22680000000",
+  "timestamp": 1792667139.448799
+ },
+ {
+  "symbol": "BTC_USDT",
+  "price": "82043.84",
+  "daily_change_price": -1.59,
+  "low": "81708.81",
+  "high": "84928.15",
+  "timestamp": 1792667009.561286
+ },
+ {
+  "symbol": "USDT_IRT",
+  "price": "270643",
+  "daily_change_price": 2.31,
+  "low": "263827",
+  "high": "271000",
+  "timestamp": 1792667152.256711
+ },
+ {
+  "symbol": "ETH_IRT",
+  "price": "651682449",
+  "daily_change_price": 0.13,
+  "low": "646931769",
+  "high": "677730579",
+  "timestamp": 1792666778.307003
+ }
+]

@@ -1,0 +1,169 @@
+{
+ "status": 0,
+ "data": [
+  {
+   "sell": 221291017927,
+   "buy": 221000000001,
+   "pair_id": 2,
+   "name": {
+    "fa": "بیت کوین",
+    "en": "bitcoin/rial"
+   },
+   "base_precision": 5,
+   "quote_precision": 0,
+   "base_currency_id": 1,
+   "base_currency_symbol": {
+    "en": "btc",
+    "fa": "بیت کوین"
+   },
+   "quote_currency_id": 2,
+   "quote_currency_symbol": {
+    "en": "irr",
+    "fa": "ریال"
+   },
+   "financial": {
+    "last24h": {
+     "open": 218400000000,
+     "close": 221000000000,
+     "highest": 225500000000,
+     "lowest": 218000000000,
+     "quote_volume": 409151956651,
+     "base_volume": 1.8480648,
+     "change_percent": 1.19
+    }
+   },
+   "price_step": 221291017,
+   "amount_step": 0,
+   "show_order": 1,
+   "url_name": "bitcoin-btc",
+   "crypto_box": 0,
+   "price_precision": 0,
+   "is_delist": 0,
+   "is_temporarily_suspended": 0,
+   "demo_enabled": true
+  },
+  {
+   "sell": 6500731217,
+   "buy": 6490529984,
+   "pair_id": 3,
+   "name": {
+    "fa": "اتریوم",
+    "en": "ethereum/rial"
+   },
+   "base_precision": 4,
+   "quote_precision": 0,
+   "base_currency_id": 4,
+   "base_currency_symbol": {
+    "en": "eth",
+    "fa": "اتریوم"
+   },
+   "quote_currency_id": 2,
+   "quote_currency_symbol": {
+    "en": "irr",
+    "fa": "ریال"
+   },
+   "financial": {
+    "last24h": {
+     "open": 6446208951,
+     "close": 6502946216.67,
+     "highest": 6693104002,
+     "lowest": 6446208951,
+     "quote_volume": 91365471176,
+     "base_volume": 13.953995,
+     "change_percent": 0.88
+    }
+   },
+   "price_step": 6500731,
+   "amount_step": 0.0001,
+   "show_order": 8,
+   "url_name": "ethereum-eth",
+   "crypto_box": 0,
+   "price_precision": 0,
+   "is_delist": 0,
+   "is_temporarily_suspended": 0,
+   "demo_enabled": false
+  },
+  {
+   "sell": 82113.9,
+   "buy": 82000,
+   "pair_id": 12,
+   "name": {
+    "fa": "بیت کوین/تتر",
+    "en": "bitcoin/tether"
+   },
+   "base_precision": 5,
+   "quote_precision": 2,
+   "base_currency_id": 1,
+   "base_currency_symbol": {
+    "en": "btc",
+    "fa": "بیت کوین"
+   },
+   "quote_currency_id": 9,
+   "quote_currency_symbol": {
+    "en": "usdt",
+    "fa": "تتر"
+   },
+   "financial": {
+    "last24h": {
+     "open": 82664.12,
+     "close": 82000,
+     "highest": 84600,
+     "lowest": 81707.14,
+     "quote_volume": 102655.72,
+     "base_volume": 1.2360096,
+     "change_percent": -0.8
+    }
+   },
+   "price_step": 82,
+   "amount_step": 12.17805,
+   "show_order": 43,
+   "url_name": "bitcoin-btc",
+   "crypto_box": 0,
+   "price_precision": 2,
+   "is_delist": 0,
+   "is_temporarily_suspended": 0,
+   "demo_enabled": true
+  },
+  {
+   "sell": 2696920,
+   "buy": 2696003,
+   "pair_id": 11,
+   "name": {
+    "fa": "تتر",
+    "en": "tether/rial"
+   },
+   "base_precision": 2,
+   "quote_precision": 0,
+   "base_currency_id": 9,
+   "base_currency_symbol": {
+    "en": "usdt",
+    "fa": "تتر"
+   },
+   "quote_currency_id": 2,
+   "quote_currency_symbol": {
+    "en": "irr",
+    "fa": "ریال"
+   },
+   "financial": {
+    "last24h": {
+     "open": 2641223,
+     "close": 2698900,
+     "highest": 2699990,
+     "lowest": 2637722,
+     "quote_volume": 1413486574261,
+     "base_volume": 529466.6639,
+     "change_percent": 2.11
+    }
+   },
+   "price_step": 2696,
+   "amount_step": 0.37,
+   "show_order": 97,
+   "url_name": "tether-usdt",
+   "crypto_box": 0,
+   "price_precision": 0,
+   "is_delist": 0,
+   "is_temporarily_suspended": 0,
+   "demo_enabled": true
+  }
+ ]
+}

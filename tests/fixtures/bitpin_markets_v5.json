@@ -1,0 +1,82 @@
+{
+ "count": 1207,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "code": "BTC_IRT",
+   "price_info": {
+    "created_at": 1792671911.0,
+    "price": "22192860807",
+    "change": 0.3099,
+    "min": "21881971664",
+    "max": "22685529881",
+    "time": null,
+    "mean": null,
+    "value": null,
+    "amount": null
+   },
+   "order_book_info": {
+    "created_at": null,
+    "price": "22219749850",
+    "change": 0.0044,
+    "min": "21895000000",
+    "max": "22680000000",
+    "time": "2026-10-22T12:23:01.000Z",
+    "mean": "22263746836",
+    "value": "288583122858",
+    "amount": "12.94708698"
+   }
+  },
+  {
+   "code": "BTC_USDT",
+   "price_info": {
+    "created_at": 1792671911.0,
+    "price": "81817.30",
+    "change": -2.0699,
+    "min": "81654.70",
+    "max": "84899.60",
+    "time": null,
+    "mean": null,
+    "value": null,
+    "amount": null
+   },
+   "order_book_info": {
+    "created_at": null,
+    "price": "81800.61",
+    "change": -0.02,
+    "min": "81708.80",
+    "max": "84978.75",
+    "time": "2026-10-22T12:24:18.000Z",
+    "mean": "83621.69",
+    "value": "2603838.18",
+    "amount": "31.16216883"
+   }
+  },
+  {
+   "code": "ETH_IRT",
+   "price_info": {
+    "created_at": 1792671912.0,
+    "price": "652248057",
+    "change": -0.2,
+    "min": "646258029",
+    "max": "674780316",
+    "time": null,
+    "mean": null,
+    "value": null,
+    "amount": null
+   },
+   "order_book_info": {
+    "created_at": null,
+    "price": "652253090",
+    "change": -0.0011,
+    "min": "646931769",
+    "max": "677730579",
+    "time": "2026-10-22T12:20:11.000Z",
+    "mean": "658666826",
+    "value": "102528048210",
+    "amount": "155.66307"
+   }
+  }
+ ]
+}

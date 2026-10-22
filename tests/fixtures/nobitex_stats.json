@@ -1,0 +1,76 @@
+{
+ "status": "ok",
+ "stats": {
+  "btc-rls": {
+   "isClosed": false,
+   "bestSell": "221919999960",
+   "bestBuy": "221740000000",
+   "volumeSrc": "12.0681727711",
+   "volumeDst": "2682966088221.942597736",
+   "latest": "221740000010",
+   "mark": "221703540970",
+   "dayLow": "219000000000",
+   "dayHigh": "226000000000",
+   "dayOpen": "219955554980",
+   "dayClose": "221740000010",
+   "dayChange": "0.81"
+  },
+  "btc-usdt": {
+   "isClosed": false,
+   "bestSell": "82050",
+   "bestBuy": "82014.52",
+   "volumeSrc": "26.7266788807",
+   "volumeDst": "2231386.7056033798",
+   "latest": "82014.52",
+   "mark": "81980.04",
+   "dayLow": "81700",
+   "dayHigh": "84749.99",
+   "dayOpen": "83175.48",
+   "dayClose": "82014.52",
+   "dayChange": "-1.4"
+  },
+  "eth-rls": {
+   "isClosed": false,
+   "bestSell": "6506223100",
+   "bestBuy": "6502140200",
+   "volumeSrc": "191.0945188858",
+   "volumeDst": "1257272761802.436140418",
+   "latest": "6506223130",
+   "mark": "6500443090",
+   "dayLow": "6451000000",
+   "dayHigh": "6710000070",
+   "dayOpen": "6515000380",
+   "dayClose": "6506223130",
+   "dayChange": "-0.13"
+  },
+  "usdt-rls": {
+   "isClosed": false,
+   "bestSell": "2705590",
+   "bestBuy": "2702450",
+   "volumeSrc": "2776721.3551310766",
+   "volumeDst": "7427854599373.815539623",
+   "latest": "2705590",
+   "mark": "2704360",
+   "dayLow": "2638000",
+   "dayHigh": "2714000",
+   "dayOpen": "2645180",
+   "dayClose": "2705590",
+   "dayChange": "2.28"
+  },
+  "doge-rls": {
+   "isClosed": false,
+   "bestSell": "214530",
+   "bestBuy": "214003",
+   "volumeSrc": "4480221.0455020394",
+   "volumeDst": "974960783937.7859008055",
+   "latest": "214000",
+   "mark": "214259",
+   "dayLow": "212000",
+   "dayHigh": "223000",
+   "dayOpen": "216990",
+   "dayClose": "214000",
+   "dayChange": "-1.38"
+  }
+ },
+ "global": {}
+}
