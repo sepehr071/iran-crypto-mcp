@@ -1,6 +1,6 @@
 [project]
 name = "iran-crypto-mcp"
-version = "0.1.2"
+version = "0.1.3"
 description = "Unofficial read-only MCP server for Iranian crypto exchanges: public prices, order books, trades and candles in Toman."
 readme = "README.md"
 license = "MIT"
