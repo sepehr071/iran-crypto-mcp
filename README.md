@@ -51,9 +51,13 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 - Compare one coin's price on all twelve exchanges, in Toman or USDT, cheapest first, with the spread
 - Get a ticker: last price, 24h range and change, volume, and best bid/ask where the exchange publishes them
 - Read order books (up to 20 levels per side) and recent public trades
-- Pull OHLC candles (15m, 1h, 4h, 1d) from Nobitex and Wallex
+- Pull OHLC candles (15m, 1h, 4h, 1d) from all eight order-book exchanges (and Aban Tether for USDT/IRT)
 - Rank the biggest 24h gainers and losers on an exchange, with illiquid coins filtered out
 - List the coins an exchange trades against Toman or USDT
+- Find the best exchange for a buy or sell of a given size, walking each order book for slippage
+- Scan all coins for price gaps between exchanges (arbitrage), on real bid/ask prices
+- Compare trading fees and each coin's withdrawal networks, fees and minimums across exchanges
+- Get a one-call market overview: the Tether rate and major coins, median price and range across exchanges
 
 Example prompts:
 
@@ -62,6 +66,10 @@ Example prompts:
 - "Show the Nobitex ETH order book. Is the spread real?"
 - "Top 5 gainers on Wallex in the last 24 hours."
 - "Give me 1-hour BTC candles from Wallex for the last two days."
+- "Where do I get the most USDT for 50 million Toman?"
+- "Which exchange has the cheapest USDT withdrawal on TRC20?"
+- "Any arbitrage between Iranian exchanges right now?"
+- <span dir="rtl">با ۵۰ میلیون تومان کجا بیشترین تتر را می&zwnj;گیرم؟</span>
 - <span dir="rtl">قیمت بیت&zwnj;کوین را در همه صرافی&zwnj;های ایرانی به تومان مقایسه کن.</span>
 - <span dir="rtl">قیمت تتر الان در کدام صرافی ارزان&zwnj;تر است؟</span>
 - <span dir="rtl">دفتر سفارش اتریوم در نوبیتکس را نشان بده.</span>
@@ -72,13 +80,13 @@ Example prompts:
 |---|---|---|---|---|---|---|---|
 | Nobitex | نوبیتکس | [nobitex.ir](https://nobitex.ir) | Rial | full | yes | yes | yes (not USDT/IRT) |
 | Wallex | والکس | [wallex.ir](https://wallex.ir) | Toman | full | yes | yes | yes |
-| Bitpin | بیت&zwnj;پین | [bitpin.ir](https://bitpin.ir) | Toman | no bid/ask | yes | yes | no |
-| Ramzinex | رمزینکس | [ramzinex.com](https://ramzinex.com) | Rial | full | yes | yes | no |
-| Tabdeal | تبدیل | [tabdeal.org](https://tabdeal.org) | Toman | no bid/ask, no volume | yes | yes | no |
-| OMPFinex | او ام پی فینکس | [ompfinex.com](https://ompfinex.com) | Rial | no bid/ask | yes | no | no |
-| Exir | اکسیر | [exir.io](https://exir.io) | Toman | no bid/ask | yes | yes | no |
-| Bit24 | بیت ۲۴ | [bit24.cash](https://bit24.cash) | Toman | no bid/ask | no | no | no |
-| Aban Tether (broker) | آبان تتر | [abantether.ir](https://abantether.ir) | Toman | buy/sell price, no high/low | no | no | no |
+| Bitpin | بیت&zwnj;پین | [bitpin.ir](https://bitpin.ir) | Toman | no bid/ask | yes | yes | yes |
+| Ramzinex | رمزینکس | [ramzinex.ir](https://ramzinex.ir) | Rial | full | yes | yes | yes |
+| Tabdeal | تبدیل | [tabdeal.org](https://tabdeal.org) | Toman | no bid/ask, no volume | yes | yes | yes |
+| OMPFinex | او ام پی فینکس | [ompfinex.com](https://ompfinex.com) | Rial | no bid/ask | yes | no | yes |
+| Exir | اکسیر | [exir.io](https://exir.io) | Toman | no bid/ask | yes | yes | yes |
+| Bit24 | بیت ۲۴ | [bit24.cash](https://bit24.cash) | Toman | no bid/ask | yes | yes (no side) | yes |
+| Aban Tether (broker) | آبان تتر | [abantether.ir](https://abantether.ir) | Toman | buy/sell price, no high/low | no | no | USDT/IRT only (1h+) |
 | Kifpool (broker) | کیف پول من | [kifpool.me](https://kifpool.me) | Toman | sell price only; no USDT/IRT | no | no | no |
 | OK-EX (broker) | اوکی اکسچنج | [ok-ex.io](https://ok-ex.io) | Toman | buy/sell price, no high/low | no | no | no |
 | Tetherland (broker) | تترلند | [tetherland.com](https://tetherland.com) | Toman | one price, no high/low | no | no | no |
@@ -89,6 +97,7 @@ Example prompts:
 - Exir publishes base volume only, so quote volume is approximated as volume times last price.
 - Use `ic_get_orderbook` for the best bid and ask where the ticker lacks them.
 - Nobitex refuses USDT/IRT candles (its CDN answers HTTP 403, browsers included): use Wallex for those.
+- `ic_fees`: every exchange has trading fees; all but Aban Tether and OK-EX also publish withdrawal networks and fees. Ramzinex, OMPFinex, Bit24, Aban Tether and Tetherland publish trading fees only on a web page, so those values are fixed in the server (checked 2026-10-28).
 
 ## Quick start
 
@@ -185,9 +194,13 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 | `ic_compare_price` | One coin's price on every exchange in one call, cheapest first, with the spread (an exchange that fails is reported, not fatal) |
 | `ic_get_ticker` | Live price, best bid and ask, 24h range, change and volume of a coin on one exchange |
 | `ic_get_orderbook` | Top bids and asks (1 to 20 levels) with the spread |
-| `ic_recent_trades` | Latest public trades, newest first (1 to 50; Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, Exir) |
-| `ic_candles` | OHLC candles, 15m / 1h / 4h / 1d, up to 100 (Nobitex and Wallex) |
+| `ic_recent_trades` | Latest public trades, newest first (1 to 50; every order-book exchange except OMPFinex) |
+| `ic_candles` | OHLC candles, 15m / 1h / 4h / 1d, up to 100 (order-book exchanges, Aban Tether for USDT/IRT) |
 | `ic_top_movers` | Biggest 24h gainers or losers on one exchange, illiquid coins filtered out (up to 25) |
+| `ic_best_deal` | Ranks exchanges by what a buy or sell of a given size gets, with order-book slippage and fill |
+| `ic_arbitrage` | Biggest cross-exchange price gaps over all coins, buy at the lowest ask and sell at the highest bid |
+| `ic_fees` | Trading fees per exchange and, for one coin, withdrawal networks, fees and minimums, with the cheapest per network |
+| `ic_market_overview` | Tether rate and major coins in one call: median Toman price, cheapest and dearest exchange, median change |
 
 ## How it works
 
@@ -257,13 +270,13 @@ an HTTP proxy with an Iranian exit and retry. System proxy variables are ignored
 <summary><b>Why does a ticker have no bid/ask or volume?</b></summary>
 
 Bitpin, Tabdeal, OMPFinex, Exir, Bit24 and Tetherland publish no bid/ask in their ticker feeds, and Tabdeal publishes no volume. Call
-`ic_get_orderbook` for the best bid and ask. The brokers (Aban Tether, Kifpool, OK-EX, Tetherland) and Bit24 have no public order book.
+`ic_get_orderbook` for the best bid and ask. The brokers (Aban Tether, Kifpool, OK-EX, Tetherland) have no public order book.
 </details>
 
 <details>
-<summary><b>Why are there no candles for most exchanges?</b></summary>
+<summary><b>Why are there no candles for the brokers?</b></summary>
 
-Only Nobitex and Wallex publish candles through public endpoints this server uses. Nobitex refuses USDT/IRT candles; use Wallex for those.
+Instant-swap brokers publish no price history of their own (Aban Tether only for USDT/IRT). Every order-book exchange has candles. Nobitex refuses USDT/IRT candles; use Wallex for those.
 </details>
 
 <details>

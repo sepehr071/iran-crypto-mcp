@@ -37,6 +37,8 @@ ROUTES = {
     "/api/v5/currencies": "tetherland_currencies.json",
     "/api/v3/markets": "bit24_markets.json",
     "/api/v3/mega-menu-coins": "bit24_otc_quotes.json",
+    "/api/v3/markets/BTC-IRT/order-books": "bit24_orderbook.json",
+    "/api/v3/markets/BTC-IRT/trades": "bit24_trades.json",
 }
 
 
@@ -64,6 +66,10 @@ async def test_all_tools_are_read_only(client):
         "ic_recent_trades",
         "ic_candles",
         "ic_top_movers",
+        "ic_best_deal",
+        "ic_arbitrage",
+        "ic_market_overview",
+        "ic_fees",
     }
     for t in tools:
         assert t.annotations.read_only_hint is True, t.name
@@ -210,9 +216,21 @@ async def test_list_markets(client, up):
 async def test_requests_carry_the_exchange_site_as_origin(client, up):
     await client.call_tool("ic_get_orderbook", {"exchange": "ramzinex", "coin": "BTC"})
     by_host = {c.url.host: c.headers for c in up.calls}
-    assert by_host["publicapi.ramzinex.com"]["origin"] == "https://ramzinex.com"
-    assert by_host["api.ramzinex.com"]["referer"] == "https://ramzinex.com/"
-    assert by_host["api.ramzinex.com"]["sec-fetch-site"] == "same-site"
+    assert by_host["publicapi.ramzinex.ir"]["origin"] == "https://ramzinex.ir"
+    assert by_host["api.ramzinex.ir"]["referer"] == "https://ramzinex.ir/"
+    assert by_host["api.ramzinex.ir"]["sec-fetch-site"] == "same-site"
+    assert by_host["api.ramzinex.ir"]["accept"] == "*/*" and by_host["api.ramzinex.ir"]["pragma"] == "no-cache"
+
+
+async def test_each_site_gets_its_own_frontend_headers(client, up):
+    await client.call_tool("ic_compare_price", {"coin": "BTC"})
+    sent = {c.url.host: c.headers for c in up.calls}
+    assert sent["api.wallex.ir"]["platform"] == "web" and sent["api.wallex.ir"]["accept"] == http.AXIOS
+    assert "referer" not in sent["azapi.ok-ex.io"] and sent["azapi.ok-ex.io"]["origin"] == "https://ok-ex.io"
+    assert sent["kifpool.me"]["sec-fetch-site"] == "same-origin" and "origin" in sent["kifpool.me"]  # POST
+    assert sent["pro.bit24.cash"]["origin"] == "https://bit24.cash"
+    assert sent["api.ompfinex.com"]["origin"] == "https://my.ompfinex.com"
+    assert sent["apiv2.nobitex.ir"]["accept-language"] == http.EN
 
 
 async def test_unknown_host_refused():
@@ -241,7 +259,7 @@ async def test_compare_price_reports_a_blocked_exchange(client, up):
     assert "exir" not in {p["exchange"] for p in r["prices"]} and len(r["prices"]) == len(exchanges.EXCHANGES) - 1
 
 
-@pytest.mark.parametrize("exchange", ["abantether", "kifpool", "okex", "tetherland", "bit24"])
+@pytest.mark.parametrize("exchange", ["abantether", "kifpool", "okex", "tetherland"])
 async def test_broker_ticker_and_no_orderbook(client, up, exchange):
     t = (await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": "BTC"})).structured_content
     assert 1e10 < t["price_toman"] < 1e11  # Toman, not Rial
@@ -273,3 +291,77 @@ async def test_kifpool_changed_feed_is_a_clear_error(client, up):
 async def test_bit24_usdt_rate_comes_from_the_instant_feed(client, up):
     r = (await client.call_tool("ic_get_ticker", {"exchange": "bit24", "coin": "USDT"})).structured_content
     assert 100_000 < r["price_toman"] < 1_000_000
+
+
+def test_walk_fills_across_levels():
+    from iran_crypto_mcp.markets import _walk
+
+    asks = [[100.0, 1.0], [110.0, 2.0]]
+    assert _walk(asks, 320.0, "buy") == (3.0, 0.0)  # 100 + 2 x 110
+    assert _walk(asks, 1000.0, "buy") == (3.0, 680.0)  # book too thin: 680 left unspent
+    bids = [[100.0, 1.0], [90.0, 1.0]]
+    assert _walk(bids, 1.5, "sell") == (145.0, 0.0)
+
+
+async def test_best_deal_buy_ranks_by_coins_received(client, up):
+    r = (
+        await client.call_tool("ic_best_deal", {"coin": "BTC", "side": "buy", "amount": 100_000_000})
+    ).structured_content
+    deals = r["deals"]
+    assert r["receive_unit"] == "btc" and deals and r["best"] == deals[0]["exchange"]
+    real = [d for d in deals if d["source"] != "listed_price"]
+    assert [d["receive"] for d in real] == sorted((d["receive"] for d in real), reverse=True)
+    assert deals[-1]["source"] == "listed_price"  # indicative single prices rank last
+    nob = next(d for d in deals if d["exchange"] == "nobitex")
+    assert 1e10 < nob["avg_price_toman"] < 1e11 and nob["avg_price_toman"] >= nob["best_price_toman"]  # Toman
+
+
+async def test_best_deal_sell_kifpool_has_no_buyback_price(client, up):
+    r = (await client.call_tool("ic_best_deal", {"coin": "BTC", "side": "sell", "amount": 0.01})).structured_content
+    assert "buy-back" in r["errors"]["kifpool"] and r["receive_unit"] == "toman"
+    assert all(d["receive"] > 1e6 for d in r["deals"])
+
+
+async def test_arbitrage_reports_executable_gaps(client, up):
+    r = (await client.call_tool("ic_arbitrage", {"min_gap_pct": 0, "min_exchanges": 2})).structured_content
+    for o in r["opportunities"]:
+        assert o["buy_on"] != o["sell_on"] and 0 <= o["gap_pct"] <= 15
+        assert o["buy_basis"] == "ask" and o["sell_basis"] == "bid"
+
+
+async def test_market_overview_median_and_range(client, up):
+    r = (await client.call_tool("ic_market_overview", {"coins": ["usdt", "btc"]})).structured_content
+    usdt, btc = r["coins"]
+    assert usdt["coin"] == "USDT" and 100_000 < usdt["median_toman"] < 1_000_000
+    assert btc["cheapest"]["price_toman"] <= btc["median_toman"] <= btc["dearest"]["price_toman"]
+    assert btc["exchanges"] == len(exchanges.EXCHANGES)
+
+
+async def test_bit24_trades_have_no_side(client, up):
+    r = (
+        await client.call_tool("ic_recent_trades", {"exchange": "bit24", "coin": "BTC", "limit": 3})
+    ).structured_content
+    t = r["trades"]
+    assert len(t) == 3 and "side" not in t[0] and 1e10 < t[0]["price_toman"] < 1e11
+
+
+@pytest.mark.parametrize("body", [exchanges.KIFPOOL_BODY, exchanges.KIFPOOL_FEES_BODY])
+def test_kifpool_query_text_matches_its_persisted_hash(body):
+    import hashlib
+
+    text = (exchanges.QUERIES / f"kifpool_{body['operationName']}.graphql").read_text(encoding="utf-8")
+    assert hashlib.sha256(text.encode()).hexdigest() == body["extensions"]["persistedQuery"]["sha256Hash"]
+
+
+async def test_kifpool_forgotten_hash_is_resent_with_the_query(client, up):
+    data = fixture("kifpool_headercoins.json")
+    up["/api/graphql"] = lambda r: httpx.Response(
+        200,
+        json=data
+        if b'"query"' in r.content
+        else {"errors": [{"message": "PersistedQueryNotFound", "extensions": {"code": "PERSISTED_QUERY_NOT_FOUND"}}]},
+    )
+    r = (await client.call_tool("ic_get_ticker", {"exchange": "kifpool", "coin": "BTC"})).structured_content
+    assert r["price_toman"] > 1e10
+    sent = [c for c in up.calls if c.url.path == "/api/graphql"]
+    assert len(sent) == 2 and b"query headerCoins" in sent[1].content

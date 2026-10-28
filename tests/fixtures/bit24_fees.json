@@ -1,0 +1,216 @@
+{
+ "success": true,
+ "data": {
+  "list": [
+   {
+    "coin": {
+     "name": "بیت کوین",
+     "symbol": "BTC"
+    },
+    "networks": [
+     {
+      "name": "BSC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00001876",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.00000028"
+     },
+     {
+      "name": "BTC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00003848",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.00002"
+     }
+    ]
+   },
+   {
+    "coin": {
+     "name": "اتریوم",
+     "symbol": "ETH"
+    },
+    "networks": [
+     {
+      "name": "ETH",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00067753",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.000043"
+     },
+     {
+      "name": "BSC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00083453",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.0002"
+     },
+     {
+      "name": "ARBITRUM",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00148453",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.00085"
+     },
+     {
+      "name": "OPTIMISM",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00064163",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.0000071"
+     },
+     {
+      "name": "BASE",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00148453",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.00085"
+     },
+     {
+      "name": "ZKSYNC2",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00488123",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.0042467"
+     },
+     {
+      "name": "LINEA",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00083453",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.0002"
+     },
+     {
+      "name": "SCROLL",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "0.00068453",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.00005"
+     }
+    ]
+   },
+   {
+    "coin": {
+     "name": "تتر",
+     "symbol": "USDT"
+    },
+    "networks": [
+     {
+      "name": "TRX",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "5",
+      "deposit_fee": "0",
+      "withdraw_fee": "3.5"
+     },
+     {
+      "name": "ETH",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.5",
+      "deposit_fee": "0",
+      "withdraw_fee": "1"
+     },
+     {
+      "name": "BSC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "1.83",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.33"
+     },
+     {
+      "name": "MATIC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.3",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.8"
+     },
+     {
+      "name": "SOL",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.3",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.8"
+     },
+     {
+      "name": "ARBITRUM",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.3",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.8"
+     },
+     {
+      "name": "AVAXC",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.3",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.8"
+     },
+     {
+      "name": "OPTIMISM",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "2.3",
+      "deposit_fee": "0",
+      "withdraw_fee": "0.8"
+     }
+    ]
+   },
+   {
+    "coin": {
+     "name": "ترون",
+     "symbol": "TRX"
+    },
+    "networks": [
+     {
+      "name": "TRX",
+      "is_disabled": false,
+      "deposit_enable": true,
+      "withdraw_enable": true,
+      "min_withdraw": "6.524886",
+      "deposit_fee": "0",
+      "withdraw_fee": "2"
+     }
+    ]
+   }
+  ],
+  "pagination": {
+   "currentPage": 1,
+   "hasMorePages": false,
+   "total": 192,
+   "lastPage": 1
+  }
+ }
+}

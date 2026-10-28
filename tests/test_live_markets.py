@@ -42,7 +42,7 @@ async def test_live_ticker_usdt_rate(client, exchange):
     assert 10_000 < price < 10_000_000  # USDT in Toman, or BTC in USDT
 
 
-@pytest.mark.parametrize("exchange", ["nobitex", "wallex", "bitpin", "ramzinex", "tabdeal", "exir"])
+@pytest.mark.parametrize("exchange", ["nobitex", "wallex", "bitpin", "ramzinex", "tabdeal", "exir", "bit24"])
 async def test_live_trades(client, exchange):
     r = (
         await client.call_tool("ic_recent_trades", {"exchange": exchange, "coin": "BTC", "limit": 5})
@@ -99,3 +99,18 @@ async def test_live_list_markets(client):
 
 async def test_live_unknown_coin_is_error(client):
     assert (await client.call_tool("ic_get_orderbook", {"exchange": "nobitex", "coin": "NOPEZZ"})).is_error
+
+
+@pytest.mark.parametrize("exchange", sorted(e.id for e in EXCHANGES.values() if e.candles))
+async def test_live_candles_sane_toman(client, exchange):
+    coin, lo, hi = ("USDT", 10_000, 10_000_000) if exchange == "abantether" else ("BTC", 1e10, 1e11)
+    r = (await client.call_tool("ic_candles", {"exchange": exchange, "coin": coin, "limit": 5})).structured_content
+    rows = r["candles"]
+    assert rows and [x[0] for x in rows] == sorted(x[0] for x in rows)
+    assert lo < rows[-1][4] < hi  # a Rial/Toman mix-up is 10x off
+
+
+async def test_live_fees_usdt(client):
+    r = (await client.call_tool("ic_fees", {"coin": "USDT"})).structured_content
+    assert len({n["exchange"] for n in r["networks"]}) >= 6, r["errors"]
+    assert r["cheapest"] and all(0 < t["taker_pct"] < 2 for t in r["trade_fees_pct"].values())

@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import re
 import time
+from statistics import median
 from typing import Annotated, Any, Literal
 
 from mcp.server.mcpserver.exceptions import ToolError
@@ -116,6 +117,7 @@ async def ic_list_exchanges() -> dict:
                 "orderbook": e.book is not None,
                 "trades": e.trades is not None,
                 "candles": e.candles is not None,
+                "fees": e.fees is not None,
             }
             for e in EXCHANGES.values()
         ],
@@ -172,7 +174,7 @@ async def ic_get_ticker(exchange: EX, coin: COIN, quote: QUOTE = "IRT") -> dict:
     """Get the live price, best bid and ask, 24h range, change and volume of one coin on one exchange.
 
     Bid and ask are missing for Bitpin, Tabdeal, OMPFinex and Exir; volume is missing for Tabdeal. Use
-    ic_get_orderbook for the best bid and ask, ic_candles (Nobitex, Wallex) for price history.
+    ic_get_orderbook for the best bid and ask, ic_candles for price history.
     A coin the exchange does not list is an error: check the symbol with ic_list_markets.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
@@ -192,7 +194,7 @@ async def ic_get_orderbook(
     """Get the top bids and asks of one coin's order book on one exchange, with the spread.
 
     Levels are [price, quantity in coin], best first. Prices are Toman (IRT) or USDT.
-    Not on Bit24 or the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
+    Not on the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.book is None:
@@ -224,7 +226,7 @@ async def ic_recent_trades(
 ) -> dict:
     """Get the most recent public trades of one coin on one exchange, newest first.
 
-    Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal and Exir only. `side` is the taker side when the exchange reports it.
+    Order-book exchanges except OMPFinex. `side` is the taker side when the exchange reports it.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.trades is None:
@@ -246,19 +248,22 @@ async def ic_recent_trades(
 @tool("Price Candles")
 async def ic_candles(
     exchange: Annotated[
-        Literal["nobitex", "wallex"], Field(description="'nobitex' or 'wallex' (the only exchanges with candles)")
+        ExchangeId, Field(description="Exchange id; ic_list_exchanges shows which have candles (candles: true)")
     ],
     coin: COIN,
     quote: QUOTE = "IRT",
     interval: Annotated[Literal["15m", "1h", "4h", "1d"], Field(description="Candle size")] = "1h",
     limit: Annotated[int, Field(ge=1, le=100, description="Most recent candles to return (1-100)")] = 48,
 ) -> dict:
-    """Get recent OHLC candles of one coin from Nobitex or Wallex, oldest first.
+    """Get recent OHLC candles of one coin on one exchange, oldest first.
 
     Rows are [time, open, high, low, close, volume in coin]; prices are Toman (IRT) or USDT.
     Nobitex refuses the USDT/IRT candles (use Wallex for those).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
+    if ex.candles is None:
+        have = ", ".join(e.id for e in EXCHANGES.values() if e.candles)
+        raise ToolError(f"{ex.name} publishes no candles here. Use {have}.")
     end = int(time.time())
     rows = await ex.candles(c, quote, RESOLUTIONS[interval], end - (limit + 2) * SECONDS[interval], end)
     return {
@@ -296,9 +301,9 @@ async def ic_top_movers(
     ex, u = EXCHANGES[exchange], _unit(quote)
     floor = min_volume if min_volume is not None else (100_000_000 if quote == "IRT" else 10_000)
     rows = [
-        (coin, _view(ex, quote, r))
+        (coin, v)
         for coin, r in (await ex.tickers(quote)).items()
-        if r["change_pct"] is not None and r["last"] is not None
+        if r["change_pct"] is not None and (v := _view(ex, quote, r))[f"price_{u}"] is not None
     ]
     if not rows:
         raise ToolError(f"{ex.name} publishes no 24h change, so movers cannot be ranked. Use another exchange.")
@@ -319,3 +324,287 @@ async def ic_top_movers(
             for c, v in rows[:limit]
         ],
     }
+
+
+async def _all_tickers(quote: str) -> tuple[dict[str, dict], dict[str, str]]:
+    """Every exchange's ticker list for one quote (one cached call each); failures land in errors."""
+    exs = list(EXCHANGES.values())
+    results = await asyncio.gather(*(e.tickers(quote) for e in exs), return_exceptions=True)
+    lists, errors = {}, {}
+    for e, r in zip(exs, results, strict=True):
+        if isinstance(r, ApiError):
+            errors[e.id] = str(r)
+        elif isinstance(r, BaseException):
+            raise r
+        else:
+            lists[e.id] = r
+    return lists, errors
+
+
+def _walk(levels: list[list[float]], amount: float, side: str) -> tuple[float, float]:
+    """Fill an order against book levels (best first). Returns (received, amount left unfilled).
+
+    buy: amount is quote currency to spend, received is coin. sell: amount is coin, received is quote currency.
+    """
+    got, left = 0.0, amount
+    for p, q in levels:
+        if left <= 0:
+            break
+        if side == "buy":
+            take = min(q, left / p)
+            left -= take * p
+            got += take
+        else:
+            take = min(q, left)
+            left -= take
+            got += take * p
+    return got, max(left, 0.0)
+
+
+async def _deal(ex: Exchange, c: str, quote: str, side: str, amount: float) -> dict:
+    """One exchange's fill: walks the order book when there is one, else uses the broker's price."""
+    u = _unit(quote)
+    if ex.book is not None:
+        bids, asks = await ex.book(c, quote)
+        levels = sorted(asks, key=lambda x: x[0]) if side == "buy" else sorted(bids, key=lambda x: -x[0])
+        scale = 10 if ex.rial and quote == "IRT" else 1  # book in Rial: compare in Toman
+        levels = [[p / scale, q] for p, q in levels if p > 0 and q > 0]
+        if not levels:
+            raise ApiError(f"{ex.name} has an empty {c}/{quote} order book.", 404)
+        source = "orderbook"
+    else:
+        row = await _ticker(ex, c, quote)
+        v = _view(ex, quote, row)
+        price = v[f"ask_{u}"] if side == "buy" else v[f"bid_{u}"]
+        source = "broker_price"
+        if price is None and v[f"bid_{u}"] is None and v[f"ask_{u}"] is None and v[f"price_{u}"] is not None:
+            price, source = v[f"price_{u}"], "listed_price"  # one price only (Tetherland): indicative
+        if price is None:
+            what = "buy-back" if side == "sell" else "sell"
+            raise ApiError(f"{ex.name} publishes no {what} price for {c}/{quote}.", 404)
+        levels = [[float(price), float("inf")]]
+    got, left = _walk(levels, amount, side)
+    done = amount - left
+    if got <= 0 or done <= 0:
+        raise ApiError(f"{ex.name} could not fill any of the order.", 404)
+    avg = done / got if side == "buy" else got / done
+    best = levels[0][0]
+    return {
+        "exchange": ex.id,
+        "name_fa": NAMES_FA[ex.id],
+        "source": source,
+        "receive": _r(got),
+        f"avg_price_{u}": _r(avg),
+        f"best_price_{u}": _r(best),
+        "slippage_pct": _pc(abs(avg / best - 1) * 100),
+        "filled_pct": _pc(done / amount * 100),
+    }
+
+
+@tool("Best Deal For An Amount")
+async def ic_best_deal(
+    coin: COIN,
+    side: Annotated[Literal["buy", "sell"], Field(description="'buy' the coin or 'sell' it")],
+    amount: Annotated[
+        float,
+        Field(
+            gt=0,
+            description="buy: how much Toman (or USDT) to spend, e.g. 50000000. sell: how many coins to sell, e.g. 0.2",
+        ),
+    ],
+    quote: QUOTE = "IRT",
+) -> dict:
+    """Rank every exchange by what a buy or sell of a given size actually gets, with order-book slippage.
+
+    Answers "where do I get the most USDT for 50M Toman?" or "where should I sell 0.2 BTC?". Order-book exchanges are
+    walked level by level (filled_pct < 100 means the visible book is too thin); brokers fill at their own buy/sell
+    price; `source: listed_price` (Tetherland) is a single indicative price, ranked last. `receive` is coins for
+    a buy and Toman/USDT for a sell. Trading and withdrawal fees are not deducted:
+    check ic_fees before acting. Prices move every second; this is a snapshot, not a quote.
+    """
+    c, u = _coin(coin), _unit(quote)
+    exs = list(EXCHANGES.values())
+    results = await asyncio.gather(*(_deal(e, c, quote, side, amount) for e in exs), return_exceptions=True)
+    deals, errors = [], {}
+    for e, r in zip(exs, results, strict=True):
+        if isinstance(r, ApiError):
+            errors[e.id] = str(r)
+        elif isinstance(r, BaseException):
+            raise r
+        else:
+            deals.append(r)
+    # one listed price (no separate buy/sell price) is indicative, so it ranks after real quotes
+    deals.sort(key=lambda d: (d["source"] != "listed_price", d["filled_pct"], d["receive"]), reverse=True)
+    return {
+        "coin": c,
+        "side": side,
+        "amount": amount,
+        "amount_unit": u if side == "buy" else c.lower(),
+        "receive_unit": c.lower() if side == "buy" else u,
+        "best": deals[0]["exchange"] if deals else None,
+        "deals": deals,
+        "errors": errors,
+    }
+
+
+def _leg(v: dict, u: str, side: str) -> tuple[float | None, str]:
+    """The price a trader can act on: ask to buy, bid to sell; the last price when the exchange publishes neither."""
+    p = v[f"ask_{u}"] if side == "buy" else v[f"bid_{u}"]
+    return (p, "ask" if side == "buy" else "bid") if p is not None else (v[f"price_{u}"], "last")
+
+
+@tool("Arbitrage Scanner")
+async def ic_arbitrage(
+    quote: QUOTE = "IRT",
+    min_gap_pct: Annotated[float, Field(ge=0, le=15, description="Smallest gap to report, in percent")] = 1.0,
+    min_exchanges: Annotated[
+        int,
+        Field(ge=2, le=12, description="Only coins listed on at least this many exchanges (filters obscure tokens)"),
+    ] = 3,
+    limit: Annotated[int, Field(ge=1, le=25, description="Opportunities to return (1-25)")] = 10,
+    executable_only: Annotated[
+        bool,
+        Field(
+            description="Only real bid/ask prices (default). False also uses exchanges that publish just a last price"
+        ),
+    ] = True,
+) -> dict:
+    """Scan every coin on every exchange for the biggest price gaps: buy where it is cheapest, sell where it is dearest.
+
+    Buy legs use the ask and sell legs the bid; `basis: last` marks an exchange that publishes only a last price, so
+    the gap may not be executable. Gaps over 15% are dropped: they are almost always stale, illiquid markets or two
+    different tokens sharing one symbol.
+    Fees, withdrawal time and network costs are not included: confirm with ic_get_orderbook and ic_fees.
+    """
+    u = _unit(quote)
+    lists, errors = await _all_tickers(quote)
+    legs: dict[str, list[tuple[str, float | None, str, float | None, str]]] = {}
+    for ex_id, rows in lists.items():
+        ex = EXCHANGES[ex_id]
+        for coin, row in rows.items():
+            v = _view(ex, quote, row)
+            buy, bb = _leg(v, u, "buy")
+            sell, sb = _leg(v, u, "sell")
+            legs.setdefault(coin, []).append((ex_id, buy, bb, sell, sb))
+    found = []
+    for coin, rows in legs.items():
+        if executable_only:
+            rows = [r for r in rows if r[2] != "last" and r[4] != "last"]
+        buys = [r for r in rows if r[1]]
+        sells = [r for r in rows if r[3]]
+        if len(rows) < min_exchanges or not buys or not sells:
+            continue
+        b = min(buys, key=lambda r: r[1])
+        s = max(sells, key=lambda r: r[3])
+        if b[0] == s[0]:
+            continue
+        gap = (s[3] / b[1] - 1) * 100
+        if min_gap_pct <= gap <= 15:
+            found.append(
+                {
+                    "coin": coin,
+                    "gap_pct": _pc(gap),
+                    "buy_on": b[0],
+                    f"buy_price_{u}": b[1],
+                    "buy_basis": b[2],
+                    "sell_on": s[0],
+                    f"sell_price_{u}": s[3],
+                    "sell_basis": s[4],
+                    "exchanges": len(rows),
+                }
+            )
+    found.sort(key=lambda f: f["gap_pct"], reverse=True)
+    return {"quote": quote, "unit": u, "count": len(found), "opportunities": found[:limit], "errors": errors}
+
+
+@tool("Market Overview")
+async def ic_market_overview(
+    coins: Annotated[
+        list[str] | None,
+        Field(
+            max_length=10,
+            description="Coins to summarize (max 10). Default: USDT, BTC, ETH, BNB, TRX, SOL, XRP, DOGE",
+        ),
+    ] = None,
+) -> dict:
+    """Get the key Iranian crypto rates in one call: the Tether rate in Toman and major coins across all exchanges.
+
+    For each coin: the median Toman price over the exchanges that list it, the cheapest and dearest exchange, the
+    median 24h change and how many exchanges answered. Start here for "what is the dollar/Tether rate" or "how is
+    the market today". Use ic_compare_price for every exchange's price of one coin.
+    """
+    wanted = [_coin(c) for c in coins] if coins else ["USDT", "BTC", "ETH", "BNB", "TRX", "SOL", "XRP", "DOGE"]
+    lists, errors = await _all_tickers("IRT")
+    out = []
+    for c in wanted:
+        rows = []
+        for ex_id, tickers in lists.items():
+            if c in tickers:
+                v = _view(EXCHANGES[ex_id], "IRT", tickers[c])
+                if v["price_toman"] is not None:
+                    rows.append((ex_id, v["price_toman"], v["change_24h_pct"]))
+        if not rows:
+            out.append({"coin": c, "exchanges": 0})
+            continue
+        rows.sort(key=lambda r: r[1])
+        changes = [r[2] for r in rows if r[2] is not None]
+        out.append(
+            {
+                "coin": c,
+                "median_toman": _r(median(r[1] for r in rows)),
+                "cheapest": {"exchange": rows[0][0], "price_toman": rows[0][1]},
+                "dearest": {"exchange": rows[-1][0], "price_toman": rows[-1][1]},
+                "change_24h_pct_median": _pc(median(changes)) if changes else None,
+                "exchanges": len(rows),
+            }
+        )
+    return {"unit": "toman", "coins": out, "errors": errors}
+
+
+@tool("Fees And Networks")
+async def ic_fees(
+    coin: Annotated[
+        str | None,
+        Field(description="Coin to compare withdrawals for, e.g. 'USDT'. Omit for trading fees only"),
+    ] = None,
+    network: Annotated[
+        str | None, Field(description="Only this network, e.g. 'TRC20', 'BEP20', 'ERC20', 'TON' (needs coin)")
+    ] = None,
+) -> dict:
+    """Compare trading fees and, for one coin, each exchange's withdrawal networks, fees and minimums.
+
+    Answers "which exchange has the cheapest USDT withdrawal on TRC20?" or "what is the trading fee on Wallex?".
+    Trading fees are the entry level (level 1) for Toman markets, in percent; volume tiers lower them. Withdrawal fees
+    and minimums are in coin units. `withdraw: false` means that network is closed right now. `cheapest` names the
+    lowest open withdrawal fee per network. Exchanges that publish no fee data are listed under `missing`.
+    """
+    c = _coin(coin) if coin else None
+    net = network.upper().replace("-", "") if network else None
+    exs = [e for e in EXCHANGES.values() if e.fees]
+    results = await asyncio.gather(*(e.fees() for e in exs), return_exceptions=True)
+    trade, rows, errors = {}, [], {}
+    for e, r in zip(exs, results, strict=True):
+        if isinstance(r, ApiError):
+            errors[e.id] = str(r)
+            continue
+        if isinstance(r, BaseException):
+            raise r
+        trade[e.id] = r["trade"]
+        if c:
+            for n in r["coins"].get(c, []):
+                if not net or n["network"] == net:
+                    rows.append({"exchange": e.id, **n})
+    out: dict[str, Any] = {"trade_fees_pct": trade}
+    if c:
+        cheapest: dict[str, dict] = {}
+        for n in rows:
+            fee = n.get("withdraw_fee")
+            if n.get("withdraw") and fee is not None:
+                best = cheapest.get(n["network"])
+                if best is None or fee < best["withdraw_fee"]:
+                    cheapest[n["network"]] = {"exchange": n["exchange"], "withdraw_fee": fee}
+        rows.sort(key=lambda n: (n["network"], n.get("withdraw_fee") is None, n.get("withdraw_fee") or 0))
+        out |= {"coin": c, "fee_unit": c.lower(), "networks": rows, "cheapest": cheapest}
+    out["missing"] = sorted(e.id for e in EXCHANGES.values() if not e.fees)
+    out["errors"] = errors
+    return out

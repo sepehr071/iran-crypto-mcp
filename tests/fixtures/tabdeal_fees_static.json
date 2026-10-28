@@ -1,0 +1,26 @@
+{
+ "BTC": {
+  "can_perm_deposit": true,
+  "can_perm_withdraw": true,
+  "can_temp_deposit": true,
+  "can_temp_withdraw": true
+ },
+ "USDT": {
+  "can_perm_deposit": true,
+  "can_perm_withdraw": true,
+  "can_temp_deposit": true,
+  "can_temp_withdraw": true
+ },
+ "ETH": {
+  "can_perm_deposit": true,
+  "can_perm_withdraw": true,
+  "can_temp_deposit": true,
+  "can_temp_withdraw": true
+ },
+ "TRX": {
+  "can_perm_deposit": true,
+  "can_perm_withdraw": true,
+  "can_temp_deposit": true,
+  "can_temp_withdraw": true
+ }
+}

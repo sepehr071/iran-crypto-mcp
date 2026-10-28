@@ -1,0 +1,26 @@
+{
+ "_source": "https://abantether.ir/info/fees (static page, transcribed 2026-10-28; no JSON endpoint)",
+ "unit": "percent of 30-day Toman volume tier",
+ "tiers": [
+  {
+   "volume_toman_30d_up_to": 100000000,
+   "fee_pct": 0.3
+  },
+  {
+   "volume_toman_30d_up_to": 1000000000,
+   "fee_pct": 0.275
+  },
+  {
+   "volume_toman_30d_up_to": 5000000000,
+   "fee_pct": 0.25
+  },
+  {
+   "volume_toman_30d_up_to": 20000000000,
+   "fee_pct": 0.225
+  },
+  {
+   "volume_toman_30d_up_to": null,
+   "fee_pct": 0.2
+  }
+ ]
+}

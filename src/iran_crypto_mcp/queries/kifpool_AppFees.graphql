@@ -1,0 +1,129 @@
+query AppFees($page: Int, $perPage: Int, $search: String) {
+  appFees(page: $page, perPage: $perPage, search: $search) {
+    trading {
+      title
+      description
+      columns {
+        key
+        title
+        __typename
+      }
+      rows {
+        key
+        type
+        structure {
+          value
+          label
+          tooltip
+          __typename
+        }
+        buy {
+          values
+          min
+          max
+          label
+          __typename
+        }
+        sell {
+          values
+          min
+          max
+          label
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    crypto {
+      title
+      description
+      search {
+        enabled
+        placeholder
+        __typename
+      }
+      pagination {
+        currentPage
+        lastPage
+        __typename
+      }
+      columns {
+        key
+        title
+        __typename
+      }
+      rows {
+        name
+        symbol
+        network
+        depositFee {
+          label
+          __typename
+        }
+        withdrawFee {
+          value
+          __typename
+        }
+        depositMin {
+          value
+          __typename
+        }
+        withdrawMin {
+          value
+          __typename
+        }
+        depositStatus {
+          value
+          label
+          __typename
+        }
+        withdrawStatus {
+          value
+          label
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    irt {
+      title
+      description
+      note
+      columns {
+        key
+        title
+        __typename
+      }
+      rows {
+        key
+        method
+        status {
+          value
+          label
+          __typename
+        }
+        depositFee {
+          label
+          tooltip
+          __typename
+        }
+        withdrawFee {
+          label
+          tooltip
+          __typename
+        }
+        processingTime
+        dailyLimit {
+          label
+          tooltip
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

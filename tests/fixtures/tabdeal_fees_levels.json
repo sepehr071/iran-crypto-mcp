@@ -1,0 +1,101 @@
+{
+ "commission_levels": [
+  {
+   "id": 1,
+   "name": "سطح ۱",
+   "maker_commission_percent": "0.0033",
+   "taker_commission_percent": "0.0035",
+   "trade_volume": "1000"
+  },
+  {
+   "id": 2,
+   "name": "سطح ۲",
+   "maker_commission_percent": "0.0031",
+   "taker_commission_percent": "0.0035",
+   "trade_volume": "2000"
+  }
+ ],
+ "special_margin_commission_levels": [
+  {
+   "id": 1,
+   "level": 1,
+   "name": "سطح ۱",
+   "maker_commission_percent": "0.0008",
+   "taker_commission_percent": "0.00095",
+   "from_volume": "0",
+   "to_volume": "1000000.00000000"
+  },
+  {
+   "id": 2,
+   "level": 2,
+   "name": "سطح ۲",
+   "maker_commission_percent": "0.00075",
+   "taker_commission_percent": "0.00095",
+   "from_volume": "1000000.00000000",
+   "to_volume": "5000000.00000000"
+  },
+  {
+   "id": 3,
+   "level": 3,
+   "name": "سطح ۳",
+   "maker_commission_percent": "0.0007",
+   "taker_commission_percent": "0.0009",
+   "from_volume": "5000000.00000000",
+   "to_volume": "15000000.00000000"
+  },
+  {
+   "id": 4,
+   "level": 4,
+   "name": "سطح ۴",
+   "maker_commission_percent": "0.00065",
+   "taker_commission_percent": "0.00085",
+   "from_volume": "15000000.00000000",
+   "to_volume": "100000000.00000000"
+  },
+  {
+   "id": 5,
+   "level": 5,
+   "name": "سطح ۵",
+   "maker_commission_percent": "0.0005",
+   "taker_commission_percent": "0.00075",
+   "from_volume": "100000000.00000000",
+   "to_volume": "300000000.00000000"
+  },
+  {
+   "id": 6,
+   "level": 6,
+   "name": "سطح ۶",
+   "maker_commission_percent": "0.0003",
+   "taker_commission_percent": "0.00065",
+   "from_volume": "300000000.00000000",
+   "to_volume": "1000000000.00000000"
+  },
+  {
+   "id": 7,
+   "level": 7,
+   "name": "سطح ۷",
+   "maker_commission_percent": "0.0002",
+   "taker_commission_percent": "0.0004",
+   "from_volume": "1000000000.00000000",
+   "to_volume": "3000000000.00000000"
+  },
+  {
+   "id": 8,
+   "level": 8,
+   "name": "سطح ۸",
+   "maker_commission_percent": "0",
+   "taker_commission_percent": "0.00025",
+   "from_volume": "3000000000.00000000",
+   "to_volume": "10000000000.00000000"
+  },
+  {
+   "id": 9,
+   "level": 9,
+   "name": "سطح ۹",
+   "maker_commission_percent": "-0.00005",
+   "taker_commission_percent": "0.00015",
+   "from_volume": "10000000000.00000000",
+   "to_volume": "50000000000.00000000"
+  }
+ ]
+}

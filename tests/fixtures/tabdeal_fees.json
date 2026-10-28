@@ -1,0 +1,113 @@
+{
+ "currency_transaction_fees": [
+  {
+   "name": "Bitcoin",
+   "symbol": "BTC",
+   "transaction_fees": [
+    {
+     "network_type": "BTC",
+     "network_type_name": "BTC",
+     "visible": true,
+     "min_withdraw": 0.001,
+     "transaction_fee": 5.13e-05
+    }
+   ],
+   "name_fa": "بیت کوین",
+   "representation_name": "بیت کوین"
+  },
+  {
+   "name": "TetherUS",
+   "symbol": "USDT",
+   "transaction_fees": [
+    {
+     "network_type": "ETH",
+     "network_type_name": "Ethereum (ERC20)",
+     "visible": true,
+     "min_withdraw": 30.94,
+     "transaction_fee": 5.0
+    },
+    {
+     "network_type": "TRX",
+     "network_type_name": "TRX (TRC20)",
+     "visible": true,
+     "min_withdraw": 8.0,
+     "transaction_fee": 2.5
+    },
+    {
+     "network_type": "BSC",
+     "network_type_name": "BSC (Bep20)",
+     "visible": true,
+     "min_withdraw": 2.2,
+     "transaction_fee": 1.1
+    },
+    {
+     "network_type": "AVAXC",
+     "network_type_name": "AVAX C-Chain",
+     "visible": true,
+     "min_withdraw": 2.4,
+     "transaction_fee": 1.2
+    },
+    {
+     "network_type": "opBNB",
+     "network_type_name": "opBNB",
+     "visible": false,
+     "min_withdraw": 0.01,
+     "transaction_fee": 0.0
+    }
+   ],
+   "name_fa": "تتر",
+   "representation_name": "تتر"
+  },
+  {
+   "name": "Ethereum",
+   "symbol": "ETH",
+   "transaction_fees": [
+    {
+     "network_type": "ETH",
+     "network_type_name": "Ethereum (ERC20)",
+     "visible": true,
+     "min_withdraw": 0.002,
+     "transaction_fee": 0.00055
+    },
+    {
+     "network_type": "ARBITRUM",
+     "network_type_name": "ARBITRUM",
+     "visible": true,
+     "min_withdraw": 0.002,
+     "transaction_fee": 0.0003
+    },
+    {
+     "network_type": "OPTIMISM",
+     "network_type_name": "OPTIMISM",
+     "visible": true,
+     "min_withdraw": 0.002,
+     "transaction_fee": 0.0003
+    },
+    {
+     "network_type": "BASE",
+     "network_type_name": "BASE",
+     "visible": false,
+     "min_withdraw": 0.01,
+     "transaction_fee": 0.0
+    }
+   ],
+   "name_fa": "اتریوم",
+   "representation_name": "اتریوم"
+  },
+  {
+   "name": "TRON",
+   "symbol": "TRX",
+   "transaction_fees": [
+    {
+     "network_type": "TRX",
+     "network_type_name": "TRX (TRC20)",
+     "visible": true,
+     "min_withdraw": 10.0,
+     "transaction_fee": 2.0
+    }
+   ],
+   "name_fa": "ترون",
+   "representation_name": "ترون"
+  }
+ ]
+}

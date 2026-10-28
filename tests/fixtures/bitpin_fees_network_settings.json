@@ -1,0 +1,457 @@
+{
+"count": 18,
+"next": null,
+"previous": null,
+"results": [
+{
+"max_withdraw": "0.001600000000000000",
+"min_withdraw": "0.000010000000000000",
+"withdraw_commission": "1.0E-7",
+"withdraw_commission_type": "value",
+"network": {
+"id": 10,
+"code": "BTCLN",
+"title": "Lightning (LN/BTCLN)",
+"can_deposit": false,
+"can_withdraw": false,
+"deposit_under_maintenance": true,
+"withdraw_under_maintenance": true
+},
+"currency": {
+"id": 1,
+"title": "Bitcoin",
+"code": "BTC",
+"withdraw_commission": "0.003000000000000000"
+},
+"order": 3,
+"deposit_under_maintenance": true,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.000400000000000000",
+"withdraw_commission": "0.00008000",
+"withdraw_commission_type": "value",
+"network": {
+"id": 1,
+"code": "BTC",
+"title": "Bitcoin (BTC)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 1,
+"title": "Bitcoin",
+"code": "BTC",
+"withdraw_commission": "0.003000000000000000"
+},
+"order": 1,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.000007800000000000",
+"withdraw_commission": "0.00000600",
+"withdraw_commission_type": "value",
+"network": {
+"id": 4,
+"code": "BNB",
+"title": "BNB Smart Chain (BEP-20 / BSC)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 1,
+"title": "Bitcoin",
+"code": "BTC",
+"withdraw_commission": "0.003000000000000000"
+},
+"order": 2,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.000390000000000000",
+"withdraw_commission": "0.00030",
+"withdraw_commission_type": "value",
+"network": {
+"id": 156,
+"code": "OPTIMISM",
+"title": "Optimism (OP)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 3,
+"title": "Ethereum",
+"code": "ETH",
+"withdraw_commission": "0.015000000000000000"
+},
+"order": 3,
+"deposit_under_maintenance": true,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.000500000000000000",
+"withdraw_commission": "0.00035",
+"withdraw_commission_type": "value",
+"network": {
+"id": 155,
+"code": "ARBITRUM",
+"title": "Arbitrum One (ARB)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 3,
+"title": "Ethereum",
+"code": "ETH",
+"withdraw_commission": "0.015000000000000000"
+},
+"order": 4,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.002150000000000000",
+"withdraw_commission": "0.00165",
+"withdraw_commission_type": "value",
+"network": {
+"id": 2,
+"code": "ETH",
+"title": "Ethereum (ERC-20 / ETH)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 3,
+"title": "Ethereum",
+"code": "ETH",
+"withdraw_commission": "0.015000000000000000"
+},
+"order": 1,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.000370000000000000",
+"withdraw_commission": "0.00028",
+"withdraw_commission_type": "value",
+"network": {
+"id": 4,
+"code": "BNB",
+"title": "BNB Smart Chain (BEP-20 / BSC)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 3,
+"title": "Ethereum",
+"code": "ETH",
+"withdraw_commission": "0.015000000000000000"
+},
+"order": 2,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.003000000000000000",
+"withdraw_commission": "0.00020",
+"withdraw_commission_type": "value",
+"network": {
+"id": 275,
+"code": "BASE",
+"title": "Base (BASE)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 3,
+"title": "Ethereum",
+"code": "ETH",
+"withdraw_commission": "0.015000000000000000"
+},
+"order": 4,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "4.000000000000000000",
+"withdraw_commission": "0.60",
+"withdraw_commission_type": "value",
+"network": {
+"id": 16,
+"code": "AVAX",
+"title": "Avalanche C-Chain (AVAX-C)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 8,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "4.000000000000000000",
+"withdraw_commission": "0.60",
+"withdraw_commission_type": "value",
+"network": {
+"id": 155,
+"code": "ARBITRUM",
+"title": "Arbitrum One (ARB)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 4,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "8.000000000000000000",
+"withdraw_commission": "3.50",
+"withdraw_commission_type": "value",
+"network": {
+"id": 2,
+"code": "ETH",
+"title": "Ethereum (ERC-20 / ETH)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 11,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "4.000000000000000000",
+"withdraw_commission": "1.00",
+"withdraw_commission_type": "value",
+"network": {
+"id": 8,
+"code": "SOL",
+"title": "Solana (SOL)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 9,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "4.000000000000000000",
+"withdraw_commission": "0.80",
+"withdraw_commission_type": "value",
+"network": {
+"id": 14,
+"code": "MATIC",
+"title": "Polygon PoS (POLYGON)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 6,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "3.000000000000000000",
+"withdraw_commission": "0.50",
+"withdraw_commission_type": "value",
+"network": {
+"id": 262,
+"code": "TON",
+"title": "Toncoin (TON)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 3,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "7.000000000000000000",
+"withdraw_commission": "3.50",
+"withdraw_commission_type": "value",
+"network": {
+"id": 3,
+"code": "TRX",
+"title": "TRON (TRC-20 / TRX)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 10,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "3.000000000000000000",
+"withdraw_commission": "0.70",
+"withdraw_commission_type": "value",
+"network": {
+"id": 4,
+"code": "BNB",
+"title": "BNB Smart Chain (BEP-20 / BSC)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 4,
+"title": "Tether",
+"code": "USDT",
+"withdraw_commission": "25.000000000000000000"
+},
+"order": 1,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.012500000000000000",
+"withdraw_commission": "0.0096",
+"withdraw_commission_type": "value",
+"network": {
+"id": 8,
+"code": "SOL",
+"title": "Solana (SOL)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 51,
+"title": "Solana",
+"code": "SOL",
+"withdraw_commission": "0.000000000000000000"
+},
+"order": 0,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false,
+"is_default_for_withdraw": false
+},
+{
+"max_withdraw": "0.000000000000000000",
+"min_withdraw": "0.010000000000000000",
+"withdraw_commission": "0.0030",
+"withdraw_commission_type": "value",
+"network": {
+"id": 4,
+"code": "BNB",
+"title": "BNB Smart Chain (BEP-20 / BSC)",
+"can_deposit": true,
+"can_withdraw": true,
+"deposit_under_maintenance": false,
+"withdraw_under_maintenance": false
+},
+"currency": {
+"id": 51,
+"title": "Solana",
+"code": "SOL",
+"withdraw_commission": "0.000000000000000000"
+},
+"order": 0,
+"deposit_under_maintenance": true,
+"withdraw_under_maintenance": true,
+"is_default_for_withdraw": false
+}
+]
+}

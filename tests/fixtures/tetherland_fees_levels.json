@@ -1,0 +1,19 @@
+{
+ "_source": "https://tetherland.com/fee/ (page table; v5/settings USER_LEVELS has the same wage/market_wage)",
+ "levels": [
+  {
+   "level": "bronze",
+   "volume_usdt_30d": "<1000",
+   "usdt_irt_swap_pct": 1.7,
+   "market_pct": 0.45,
+   "other_pairs_pct": 0
+  },
+  {
+   "level": "silver",
+   "volume_usdt_30d": "1000-5000",
+   "usdt_irt_swap_pct": 1.6,
+   "market_pct": 0.4,
+   "other_pairs_pct": 0
+  }
+ ]
+}

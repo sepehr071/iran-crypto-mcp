@@ -20,14 +20,17 @@ Workflow:
 1. ic_list_exchanges (what each exchange offers), ic_list_markets (valid coin symbols).
 2. Price of a coin everywhere: ic_compare_price (cheapest/priciest exchange and the spread in one call).
    Use coin='USDT' for the Tether rate in Toman.
-3. One exchange: ic_get_ticker, ic_get_orderbook, ic_recent_trades, ic_candles (Nobitex, Wallex), ic_top_movers.
+3. One exchange: ic_get_ticker, ic_get_orderbook, ic_recent_trades, ic_candles, ic_top_movers.
+4. "What is the market doing / the Tether rate": ic_market_overview. "Where do I get the most for X Toman" or
+   "where to sell N coins": ic_best_deal (walks order books). Price gaps between exchanges: ic_arbitrage.
+   Trading fees, withdrawal networks and fees: ic_fees (coin='USDT', network='TRC20').
 
 Units: every IRT price is returned in Toman. Nobitex, Ramzinex and OMPFinex publish Rial; this server divides
 by 10 so exchanges compare directly. USDT markets are in USDT. Field names carry the unit (price_toman, price_usdt).
 Coins are upper-case tickers ('BTC'); quote is 'IRT' (default) or 'USDT'. Data is cached for 15 seconds.
 In Persian answers name each exchange by its `name_fa` field (نوبیتکس, والکس, بیت\u200cپین, رمزینکس, تبدیل,
 او ام پی فینکس, اکسیر, آبان تتر, کیف پول من, اوکی اکسچنج, تترلند, بیت ۲۴) and never spell the names yourself.
-Brokers and Bit24 publish prices only (ic_list_exchanges shows orderbook=false): no order book, trades or candles.
+The instant-swap brokers publish prices only (ic_list_exchanges shows orderbook=false): no order book or trades.
 A broker's bid/ask is its own buy-back/sell price, so its spread is a fee, not market depth.
 Quotes can differ between exchanges for real reasons (fees, liquidity, stale last trade): check the order book
 before treating a spread as an opportunity. A coin an exchange does not list is an error naming ic_list_markets. An exchange can fail alone (HTTP 403 means

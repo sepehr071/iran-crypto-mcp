@@ -1,0 +1,38 @@
+[
+{
+"market": 1,
+"symbol": "BTC_IRT",
+"maker": 0.003,
+"taker": 0.0035
+},
+{
+"market": 2,
+"symbol": "BTC_USDT",
+"maker": 0.003,
+"taker": 0.0035
+},
+{
+"market": 5,
+"symbol": "USDT_IRT",
+"maker": 0.003,
+"taker": 0.0035
+},
+{
+"market": 3,
+"symbol": "ETH_USDT",
+"maker": 0.003,
+"taker": 0.0035
+},
+{
+"market": 4,
+"symbol": "ETH_IRT",
+"maker": 0.003,
+"taker": 0.0035
+},
+{
+"market": 108,
+"symbol": "SOL_IRT",
+"maker": 0.003,
+"taker": 0.0035
+}
+]

@@ -1,0 +1,239 @@
+{
+"result": {
+"TMN": {
+"key": "TMN",
+"name_en": "TOMAN",
+"type": "FIAT",
+"base": true,
+"precision": 0,
+"updated_at": "2022-12-06T13:18:16.000000Z",
+"categories": [],
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"transaction_fee": {
+"max_fee": 10000,
+"percent": 1,
+"WTW_percent": 0.02
+},
+"min_withdrawal_value": 15000
+},
+"BTC": {
+"key": "BTC",
+"name_en": "Bitcoin",
+"type": "CRYPTO",
+"base": false,
+"precision": 8,
+"updated_at": "2022-12-08T11:47:32.000000Z",
+"categories": [],
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"network": [
+{
+"id": 1,
+"name": "BITCOIN",
+"type": "ADDRESS",
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": false,
+"transaction_fee": 5e-05,
+"min_confirmation": 2,
+"min_deposit_value": 0.0002,
+"max_withdrawal_value": 0.4,
+"min_withdrawal_value": 0.0004
+}
+]
+},
+"ETH": {
+"key": "ETH",
+"name_en": "Ethereum",
+"type": "CRYPTO",
+"base": false,
+"precision": 8,
+"updated_at": "2022-12-13T13:33:12.000000Z",
+"categories": [],
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"network": [
+{
+"id": 4,
+"name": "ERC20",
+"type": "ADDRESS",
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": false,
+"transaction_fee": 0.0008,
+"min_confirmation": 10,
+"min_deposit_value": 0.001,
+"max_withdrawal_value": 10,
+"min_withdrawal_value": 0.0072
+},
+{
+"id": 55,
+"name": "ARBITRUM",
+"type": "ADDRESS",
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": false,
+"transaction_fee": 0.0004,
+"min_confirmation": 60,
+"min_deposit_value": 0.0005,
+"max_withdrawal_value": 10,
+"min_withdrawal_value": 0.0004
+}
+]
+},
+"USDT": {
+"key": "USDT",
+"name_en": "Tether",
+"type": "CRYPTO",
+"base": true,
+"precision": 8,
+"updated_at": "2022-12-13T13:33:12.000000Z",
+"categories": [],
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"network": [
+{
+"id": 22,
+"name": "TRC20",
+"type": "ADDRESS",
+"deposit_availability": "DISABLE",
+"withdrawal_availability": "DISABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 2,
+"suggested": false,
+"transaction_fee": 3.5,
+"min_confirmation": 1,
+"min_deposit_value": 0,
+"max_withdrawal_value": 50000,
+"min_withdrawal_value": 6
+},
+{
+"id": 34,
+"name": "BSC",
+"type": "ADDRESS",
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": true,
+"transaction_fee": 0.8,
+"min_confirmation": 1,
+"min_deposit_value": 0,
+"max_withdrawal_value": 40000,
+"min_withdrawal_value": 4.2
+},
+{
+"id": 4,
+"name": "ERC20",
+"type": "ADDRESS",
+"deposit_availability": "DISABLE",
+"withdrawal_availability": "DISABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 1,
+"suggested": false,
+"transaction_fee": 1,
+"min_confirmation": 10,
+"min_deposit_value": "2",
+"max_withdrawal_value": 40000,
+"min_withdrawal_value": 0.5
+}
+]
+},
+"TON": {
+"key": "TON",
+"name_en": "Toncoin",
+"type": "CRYPTO",
+"base": false,
+"precision": 8,
+"updated_at": "2024-01-22T09:46:38.000000Z",
+"categories": [],
+"deposit_availability": "DISABLE",
+"withdrawal_availability": "DISABLE",
+"network": [
+{
+"id": 59,
+"name": "TON",
+"type": "MEMO",
+"deposit_availability": "DISABLE",
+"withdrawal_availability": "DISABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"address": "EQDHuT2Kiu5svuOAQ9Jdu0jKaQ0TBwwxDf-3ouxHl8-RebaI",
+"priority": 0,
+"suggested": false,
+"transaction_fee": 0.02,
+"min_confirmation": 12,
+"min_deposit_value": 0,
+"max_withdrawal_value": 2000,
+"min_withdrawal_value": 0.98
+}
+]
+},
+"SOL": {
+"key": "SOL",
+"name_en": "Solana",
+"type": "CRYPTO",
+"base": false,
+"precision": 8,
+"updated_at": "2022-12-06T13:18:17.000000Z",
+"categories": [],
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"network": [
+{
+"id": 34,
+"name": "BSC",
+"type": "ADDRESS",
+"deposit_availability": "DISABLE",
+"withdrawal_availability": "DISABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": false,
+"transaction_fee": 0.003,
+"min_confirmation": 1,
+"min_deposit_value": 0,
+"min_withdrawal_value": 0.005
+},
+{
+"id": 72,
+"name": "SOLANA",
+"type": "ADDRESS",
+"deposit_availability": "ENABLE",
+"withdrawal_availability": "ENABLE",
+"deposit_unavailability_reason": null,
+"withdrawal_unavailability_reason": null,
+"priority": 0,
+"suggested": false,
+"transaction_fee": 0.01,
+"min_confirmation": 1,
+"min_deposit_value": 1.5e-06,
+"max_withdrawal_value": 80,
+"min_withdrawal_value": 0.08
+}
+]
+}
+},
+"message": "The operation was successful",
+"success": true,
+"provider": "trade",
+"result_info": {
+"page": 1,
+"per_page": 266,
+"count": 1,
+"total_count": 266
+}
+}

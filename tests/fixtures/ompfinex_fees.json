@@ -1,0 +1,207 @@
+{
+ "status": "OK",
+ "data": [
+  {
+   "id": "BTC",
+   "name": "بیت کوین",
+   "icon_path": "https://cdn.ompfinex.com/t/btc.svg",
+   "networks": [
+    {
+     "network": "BEP20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.00004",
+     "minimum_withdraw_amount": "0.00009",
+     "minimum_deposit_amount": "0.000015"
+    },
+    {
+     "network": "BTC",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.00005",
+     "minimum_withdraw_amount": "0.0002",
+     "minimum_deposit_amount": "0.0000001"
+    },
+    {
+     "network": "KCC",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": false,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.00003",
+     "minimum_withdraw_amount": "0.001",
+     "minimum_deposit_amount": "0.000015"
+    }
+   ],
+   "decimal_precision": 8,
+   "color": "ff9900",
+   "category": {
+    "slug": "infrastructure"
+   },
+   "is_visible": true
+  },
+  {
+   "id": "ETH",
+   "name": "اتریوم",
+   "icon_path": "https://cdn.ompfinex.com/t/eth.svg",
+   "networks": [
+    {
+     "network": "BEP20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.0005",
+     "minimum_withdraw_amount": "0.001",
+     "minimum_deposit_amount": "0.0005"
+    },
+    {
+     "network": "ERC20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.0004",
+     "minimum_withdraw_amount": "0.003",
+     "minimum_deposit_amount": "0.0009"
+    },
+    {
+     "network": "KCC",
+     "has_memo": false,
+     "withdraw_enabled": false,
+     "deposit_enabled": false,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.0008",
+     "minimum_withdraw_amount": "0.011",
+     "minimum_deposit_amount": "0.0005"
+    }
+   ],
+   "decimal_precision": 7,
+   "color": "627eea",
+   "category": {
+    "slug": "infrastructure"
+   },
+   "is_visible": true
+  },
+  {
+   "id": "USDT",
+   "name": "تتر",
+   "icon_path": "https://cdn.ompfinex.com/t/usdt.svg",
+   "networks": [
+    {
+     "network": "ARBITRUM",
+     "has_memo": false,
+     "withdraw_enabled": false,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "2",
+     "minimum_withdraw_amount": "5",
+     "minimum_deposit_amount": "1"
+    },
+    {
+     "network": "BEP20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.7",
+     "minimum_withdraw_amount": "2",
+     "minimum_deposit_amount": "1"
+    },
+    {
+     "network": "ERC20",
+     "has_memo": false,
+     "withdraw_enabled": false,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "6",
+     "minimum_withdraw_amount": "10",
+     "minimum_deposit_amount": "2"
+    },
+    {
+     "network": "KCC",
+     "has_memo": false,
+     "withdraw_enabled": false,
+     "deposit_enabled": false,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.7",
+     "minimum_withdraw_amount": "10",
+     "minimum_deposit_amount": "1"
+    },
+    {
+     "network": "POLYGON",
+     "has_memo": false,
+     "withdraw_enabled": false,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "1.5",
+     "minimum_withdraw_amount": "10",
+     "minimum_deposit_amount": "1"
+    },
+    {
+     "network": "SOL",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "2",
+     "minimum_withdraw_amount": "8",
+     "minimum_deposit_amount": "1"
+    },
+    {
+     "network": "TON",
+     "has_memo": true,
+     "withdraw_enabled": false,
+     "deposit_enabled": false,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "0.5",
+     "minimum_withdraw_amount": "10",
+     "minimum_deposit_amount": "4"
+    },
+    {
+     "network": "TRC20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "4",
+     "minimum_withdraw_amount": "8",
+     "minimum_deposit_amount": "4"
+    }
+   ],
+   "decimal_precision": 2,
+   "color": "26a17b",
+   "category": {
+    "slug": "stablecoin"
+   },
+   "is_visible": true
+  },
+  {
+   "id": "TRX",
+   "name": "ترون",
+   "icon_path": "https://cdn.ompfinex.com/t/trx.svg",
+   "networks": [
+    {
+     "network": "TRC20",
+     "has_memo": false,
+     "withdraw_enabled": true,
+     "deposit_enabled": true,
+     "deposit_manual_wallet_refresh": false,
+     "withdraw_fee": "3",
+     "minimum_withdraw_amount": "8",
+     "minimum_deposit_amount": "4"
+    }
+   ],
+   "decimal_precision": 3,
+   "color": "ef0027",
+   "category": {
+    "slug": "infrastructure"
+   },
+   "is_visible": true
+  }
+ ]
+}

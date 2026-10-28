@@ -1,0 +1,21 @@
+{
+ "1": {
+  "id": 1,
+  "fees": {
+   "maker": {
+    "btc-irt": 0.3,
+    "usdt-irt": 0.3,
+    "btc-usdt": 0.09,
+    "eth-usdt": 0.09,
+    "eth-irt": 0.3
+   },
+   "taker": {
+    "btc-irt": 0.3,
+    "usdt-irt": 0.3,
+    "btc-usdt": 0.12,
+    "eth-usdt": 0.12,
+    "eth-irt": 0.3
+   }
+  }
+ }
+}

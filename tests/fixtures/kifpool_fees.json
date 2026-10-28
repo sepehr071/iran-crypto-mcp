@@ -1,0 +1,587 @@
+{
+ "data": {
+  "appFees": {
+   "trading": {
+    "rows": [
+     {
+      "key": "pro",
+      "type": "معاملات حرفه‌ای (پایه تتر)",
+      "structure": {
+       "value": "fixed",
+       "label": "ثابت",
+       "tooltip": null,
+       "__typename": "FeeStructureType"
+      },
+      "buy": {
+       "values": [
+        0.2
+       ],
+       "min": null,
+       "max": null,
+       "label": "۰.۲٪",
+       "__typename": "FeeRateType"
+      },
+      "sell": {
+       "values": [
+        0.2
+       ],
+       "min": null,
+       "max": null,
+       "label": "۰.۲٪",
+       "__typename": "FeeRateType"
+      },
+      "__typename": "FeeTradingRowType"
+     },
+     {
+      "key": "easy",
+      "type": "معاملات آسان",
+      "structure": {
+       "value": "variable",
+       "label": "متغیر",
+       "tooltip": "در معاملات آسان کارمزد یکی از دو مقدار مشخص ۰.۲۵٪ تا ۰.۵٪ می‌باشد و مقدار دقیق آن پیش از تایید معامله نمایش داده می‌شود.",
+       "__typename": "FeeStructureType"
+      },
+      "buy": {
+       "values": [
+        0.25,
+        0.5
+       ],
+       "min": 0.25,
+       "max": 0.5,
+       "label": "۰.۲۵٪ تا ٪۰.۵",
+       "__typename": "FeeRateType"
+      },
+      "sell": {
+       "values": [
+        0.25,
+        0.5
+       ],
+       "min": 0.25,
+       "max": 0.5,
+       "label": "۰.۲۵٪ تا ٪۰.۵",
+       "__typename": "FeeRateType"
+      },
+      "__typename": "FeeTradingRowType"
+     },
+     {
+      "key": "dex_plus",
+      "type": "معاملات دکس پلاس",
+      "structure": {
+       "value": "fixed",
+       "label": "ثابت",
+       "tooltip": null,
+       "__typename": "FeeStructureType"
+      },
+      "buy": {
+       "values": [
+        3
+       ],
+       "min": null,
+       "max": null,
+       "label": "۳٪",
+       "__typename": "FeeRateType"
+      },
+      "sell": {
+       "values": [
+        3
+       ],
+       "min": null,
+       "max": null,
+       "label": "۳٪",
+       "__typename": "FeeRateType"
+      },
+      "__typename": "FeeTradingRowType"
+     }
+    ]
+   },
+   "crypto": {
+    "pagination": {
+     "currentPage": 1,
+     "lastPage": 1
+    },
+    "rows": [
+     {
+      "name": "بیت کوین",
+      "symbol": "BTC",
+      "network": "BTC",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.00013",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.0001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.00016",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "بیت کوین",
+      "symbol": "BTC",
+      "network": "BSC",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.00005",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.00001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.0001",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "اتریوم",
+      "symbol": "ETH",
+      "network": "ETH",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.0014",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.004",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.002",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "اتریوم",
+      "symbol": "ETH",
+      "network": "BSC",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.00013",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.00048",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "اتریوم",
+      "symbol": "ETH",
+      "network": "BASE",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.00055",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.0009",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "اتریوم",
+      "symbol": "ETH",
+      "network": "ARBITRUM",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.000045",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.0002",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "اتریوم",
+      "symbol": "ETH",
+      "network": "LINEA",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.001",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.001",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "0.0015",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "TRX",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "3.5",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "7",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "5",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "BSC",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.7",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "ETH",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "5",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "5",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "6",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "ARBITRUM",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.8",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "1.5",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "TON",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.8",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "1.5",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "POL",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.8",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "1.5",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "SOL",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "1",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "1",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "2",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     },
+     {
+      "name": "تتر",
+      "symbol": "USDT",
+      "network": "AVAX",
+      "depositFee": {
+       "label": "رایگان",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawFee": {
+       "value": "0.6",
+       "__typename": "FeeAmountType"
+      },
+      "depositMin": {
+       "value": "0.3",
+       "__typename": "FeeAmountType"
+      },
+      "withdrawMin": {
+       "value": "1",
+       "__typename": "FeeAmountType"
+      },
+      "depositStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "withdrawStatus": {
+       "value": "active",
+       "label": "فعال",
+       "__typename": "FeeStatusType"
+      },
+      "__typename": "FeeCryptoRowType"
+     }
+    ]
+   }
+  }
+ }
+}

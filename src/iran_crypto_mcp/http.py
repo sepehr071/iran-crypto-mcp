@@ -21,7 +21,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 HEADERS = {
     # User-Agent, sec-ch-ua and TLS come from the impersonated Chrome profile (see _get_client).
-    "Accept": "application/json",
+    # Accept and site-specific headers come per host from SITES.
     "Accept-Language": "fa-IR,fa;q=0.9,en;q=0.8",
     "sec-fetch-dest": "empty",
     "sec-fetch-mode": "cors",
@@ -36,23 +36,40 @@ CACHE_TTL = 15  # seconds; live prices must stay fresh
 CACHE_MAX = 64
 RETRY_DELAY = 0.5  # seconds, doubled per retry
 MAX_BODY = 5_000_000  # bytes; larger responses are refused (the biggest, the Bitpin v5 market list, is ~1.7 MB)
-# API host -> the website it serves; sent as Origin/Referer like that site's own XHR calls
-SITES = {
-    "apiv2.nobitex.ir": "https://nobitex.ir",
-    "api.wallex.ir": "https://wallex.ir",
-    "api.bitpin.ir": "https://bitpin.ir",
-    "api.ramzinex.com": "https://ramzinex.com",
-    "publicapi.ramzinex.com": "https://ramzinex.com",
-    "api.tabdeal.org": "https://tabdeal.org",
-    "api-web.tabdeal.org": "https://tabdeal.org",
-    "api.ompfinex.com": "https://ompfinex.com",
-    "api.exir.io": "https://exir.io",
-    "api.abantether.ir": "https://abantether.ir",
-    "kifpool.me": "https://kifpool.me",
-    "azapi.ok-ex.io": "https://ok-ex.io",
-    "service.tetherland.com": "https://app.tetherland.com",
-    "pro.bit24.cash": "https://pro.bit24.cash",
-    "api.bit24.cash": "https://bit24.cash",
+AXIOS = "application/json, text/plain, */*"
+EN = "en-US,en;q=0.9"
+NO_CACHE = {"Cache-Control": "no-cache", "Pragma": "no-cache"}
+# API host -> (site the browser calls it from, sec-fetch-site, Accept, extra headers), as each site's own frontend
+# sends them (checked in Chrome 2026-10-28). Referer is "<site>/" unless extra sets it to None (no-referrer sites).
+# Doubles as the host allowlist.
+SITES: dict[str, tuple[str, str, str, dict[str, str | None]]] = {
+    "apiv2.nobitex.ir": ("https://nobitex.ir", "same-site", "application/json", {"Accept-Language": EN}),
+    "api.wallex.ir": (
+        "https://wallex.ir",
+        "same-site",
+        AXIOS,
+        {"platform": "web", "Accept-Language": "fa-IR,fa;q=0.9,en-GB;q=0.8,en;q=0.7,en-US;q=0.6"},
+    ),
+    "api.bitpin.ir": ("https://bitpin.ir", "same-site", AXIOS, {"Accept-Language": "fa"}),
+    "api.ramzinex.ir": ("https://ramzinex.ir", "same-site", "*/*", {"Accept-Language": EN, **NO_CACHE}),
+    "publicapi.ramzinex.ir": ("https://ramzinex.ir", "same-site", "*/*", {"Accept-Language": EN, **NO_CACHE}),
+    "api.tabdeal.org": ("https://tabdeal.org", "same-site", "*/*", {"Accept-Language": "fa-ir"}),
+    "api-web.tabdeal.org": ("https://tabdeal.org", "same-site", "*/*", {"Accept-Language": "fa-ir"}),
+    # x-version (the app build number) is left out: it changes on every deploy
+    "api.ompfinex.com": (
+        "https://my.ompfinex.com",
+        "same-site",
+        AXIOS,
+        {"Accept-Language": EN, "x-platform": "web", "ngsw-bypass": "1"},
+    ),
+    "api.exir.io": ("https://pro.exir.io", "same-site", AXIOS, {"Accept-Language": EN}),
+    "api.abantether.ir": ("https://abantether.ir", "same-site", "*/*", {}),
+    "kifpool.me": ("https://kifpool.me", "same-origin", "application/graphql-response+json,application/json;q=0.9", {}),
+    "azapi.ok-ex.io": ("https://ok-ex.io", "same-site", "*/*", {"Referer": None}),
+    "service.tetherland.com": ("https://app.tetherland.com", "same-site", "application/json", {}),
+    # the site also sends os-name/app-version headers derived from its UA; ours is Chrome on macOS, so they are left out
+    "pro.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),
+    "api.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),
 }
 HOSTS = set(SITES)
 
@@ -68,8 +85,13 @@ class _XhrTransport(AsyncCurlTransport):
     """The Chrome profile sends navigation-only headers; a None value makes curl drop them (API calls are XHR)."""
 
     def _create_request_params(self, req: httpx.Request) -> dict[str, Any]:
+        # The parent drops "accept: */*" as an httpx default; curl would then send Chrome's page Accept instead.
+        accept = req.headers.get("accept")
         p = super()._create_request_params(req)
-        p["headers"] = [*p["headers"], (b"upgrade-insecure-requests", None), (b"sec-fetch-user", None)]
+        extra = [(b"upgrade-insecure-requests", None), (b"sec-fetch-user", None)]
+        if "cache-control" not in req.headers:
+            extra.append((b"cache-control", None))  # streams add max-age=0, which Chrome sends only on a reload
+        p["headers"] = [*p["headers"], *extra, *([(b"accept", b"*/*")] if accept == "*/*" else [])]
         return p
 
 
@@ -180,8 +202,13 @@ async def fetch(url: str, params: dict[str, Any] | None = None, json: Any = None
     return body
 
 
-def _site_headers(host: str) -> dict[str, str]:
-    return {"Origin": SITES[host], "Referer": f"{SITES[host]}/", "sec-fetch-site": "same-site"}
+def _site_headers(host: str, post: bool = False) -> dict[str, str]:
+    site, fetch_site, accept, extra = SITES[host]
+    h: dict[str, str | None] = {"Referer": f"{site}/", "Accept": accept, "sec-fetch-site": fetch_site}
+    if fetch_site != "same-origin" or post:  # Chrome sends Origin on cross-origin calls and on every POST
+        h["Origin"] = site
+    h |= extra
+    return {k: v for k, v in h.items() if v is not None}
 
 
 async def _send(client, limit, url, query, host, json=None) -> tuple[httpx.Response, bytes]:
@@ -189,7 +216,9 @@ async def _send(client, limit, url, query, host, json=None) -> tuple[httpx.Respo
         async with limit:
             await asyncio.sleep(random.uniform(*JITTER))
             method = "GET" if json is None else "POST"
-            async with client.stream(method, url, params=query, json=json, headers=_site_headers(host)) as r:
+            async with client.stream(
+                method, url, params=query, json=json, headers=_site_headers(host, json is not None)
+            ) as r:
                 return r, await _read_capped(r, host)
     except httpx.TimeoutException as e:
         raise ApiError(f"{host} did not answer in time. Try again in a moment.") from e

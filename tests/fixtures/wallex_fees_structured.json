@@ -1,0 +1,87 @@
+{
+"result": {
+"TMN": {
+"currency": "TMN",
+"recent_days": 30,
+"maker_fee": 0.0025,
+"taker_fee": 0.003,
+"is_fixed": true,
+"levels": [
+{
+"threshold": 0,
+"maker_fee": 0.0025,
+"taker_fee": 0.003,
+"daily_withdrawal_limitation": 100000000
+},
+{
+"threshold": 100000000,
+"maker_fee": 0.002,
+"taker_fee": 0.0025,
+"daily_withdrawal_limitation": 300000000
+},
+{
+"threshold": 1000000000,
+"maker_fee": 0.0017,
+"taker_fee": 0.002,
+"daily_withdrawal_limitation": 500000000
+},
+{
+"threshold": 3000000000,
+"maker_fee": 0.0014,
+"taker_fee": 0.0017,
+"daily_withdrawal_limitation": 600000000
+},
+{
+"threshold": 10000000000,
+"maker_fee": 0.0012,
+"taker_fee": 0.0015,
+"daily_withdrawal_limitation": 800000000
+},
+{
+"threshold": 20000000000,
+"maker_fee": 0.001,
+"taker_fee": 0.0013,
+"daily_withdrawal_limitation": 2000000000
+}
+]
+},
+"USDT": {
+"currency": "USDT",
+"recent_days": 30,
+"maker_fee": 0.001,
+"taker_fee": 0.0013,
+"is_fixed": true,
+"levels": [
+{
+"threshold": 0,
+"maker_fee": 0.001,
+"taker_fee": 0.0013,
+"daily_withdrawal_limitation": 20000
+},
+{
+"threshold": 500000,
+"maker_fee": 0.0005,
+"taker_fee": 0.0008,
+"daily_withdrawal_limitation": 100000
+}
+]
+},
+"BTC": {
+"currency": "BTC",
+"recent_days": 30,
+"maker_fee": 0,
+"taker_fee": 0,
+"is_fixed": true,
+"levels": [
+{
+"threshold": 0,
+"maker_fee": 0,
+"taker_fee": 0,
+"daily_withdrawal_limitation": 0
+}
+]
+}
+},
+"message": "The operation was successful",
+"success": true
+}

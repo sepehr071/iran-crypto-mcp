@@ -1,0 +1,23 @@
+query headerCoins($search: String, $offset: Int, $limit: Int) {
+  coinList(offset: $offset, limit: $limit, query: $search) {
+    coins {
+      ...CoinCardCore
+      name
+      priceSellIRT
+      __typename
+    }
+    total
+    __typename
+  }
+}
+
+fragment CoinCardCore on CoinDetailType {
+  faName
+  smallImage
+  price
+  priceChangePercent
+  slug
+  nameId
+  symbol
+  __typename
+}

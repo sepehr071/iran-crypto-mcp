@@ -1,0 +1,84 @@
+{
+ "success": true,
+ "status_code": 200,
+ "error": null,
+ "data": {
+  "message": "",
+  "buy_orders": [
+   {
+    "price": "22013033278",
+    "amount": "0.0957061",
+    "cumulative_amount": "0.0957061",
+    "total": "2106781564"
+   },
+   {
+    "price": "22007555161",
+    "amount": "0.077515",
+    "cumulative_amount": "0.1732211",
+    "total": "1705915638"
+   },
+   {
+    "price": "21998510941",
+    "amount": "0.0808711",
+    "cumulative_amount": "0.2540922",
+    "total": "1779043778"
+   },
+   {
+    "price": "21994980606",
+    "amount": "0.0819727",
+    "cumulative_amount": "0.3360649",
+    "total": "1802987946"
+   },
+   {
+    "price": "21991718673",
+    "amount": "0.0846906",
+    "cumulative_amount": "0.4207555",
+    "total": "1862491849"
+   },
+   {
+    "price": "21981769947",
+    "amount": "0.0774886",
+    "cumulative_amount": "0.4982441",
+    "total": "1703336578"
+   }
+  ],
+  "sell_orders": [
+   {
+    "price": "22040329769",
+    "amount": "0.00000288",
+    "cumulative_amount": "0.00000288",
+    "total": "63476"
+   },
+   {
+    "price": "22042844022",
+    "amount": "0.1135061",
+    "cumulative_amount": "0.11350898",
+    "total": "2501997257"
+   },
+   {
+    "price": "22045454546",
+    "amount": "0.00000485",
+    "cumulative_amount": "0.11351383",
+    "total": "106920"
+   },
+   {
+    "price": "22048404897",
+    "amount": "0.0839176",
+    "cumulative_amount": "0.19743143",
+    "total": "1850249222"
+   },
+   {
+    "price": "22050566447",
+    "amount": "0.0777969",
+    "cumulative_amount": "0.27522833",
+    "total": "1715465712"
+   },
+   {
+    "price": "22060983615",
+    "amount": "0.0817057",
+    "cumulative_amount": "0.35693403",
+    "total": "1802508108"
+   }
+  ]
+ }
+}

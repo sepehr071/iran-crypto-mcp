@@ -1,0 +1,113 @@
+{
+ "coins": {
+  "usdt": {
+   "symbol": "usdt",
+   "active": true,
+   "allow_deposit": true,
+   "allow_withdrawal": true,
+   "withdrawal_fee": 20,
+   "min": 1,
+   "network": "eth,trx,bnb,matic",
+   "withdrawal_fees": {
+    "bnb": {
+     "value": 0.3,
+     "active": true,
+     "symbol": "usdt",
+     "markup": 0,
+     "total": 0.3
+    },
+    "eth": {
+     "value": 0.5,
+     "active": true,
+     "symbol": "usdt",
+     "markup": 0,
+     "total": 0.5
+    },
+    "trx": {
+     "value": 2,
+     "active": true,
+     "symbol": "usdt",
+     "markup": 0,
+     "total": 2
+    },
+    "matic": {
+     "value": 0.2,
+     "active": true,
+     "symbol": "usdt",
+     "markup": 0,
+     "total": 0.2
+    }
+   },
+   "network_overrides": {
+    "bnb": {
+     "allow_deposit": true,
+     "allow_withdrawal": true
+    },
+    "eth": {
+     "allow_deposit": false,
+     "allow_withdrawal": false
+    },
+    "trx": {
+     "allow_deposit": false,
+     "allow_withdrawal": false
+    },
+    "matic": {
+     "allow_deposit": false,
+     "allow_withdrawal": false
+    }
+   }
+  },
+  "trx": {
+   "symbol": "trx",
+   "active": true,
+   "allow_deposit": true,
+   "allow_withdrawal": true,
+   "withdrawal_fee": 1,
+   "min": 0.1,
+   "network": "trx",
+   "withdrawal_fees": {
+    "trx": {
+     "value": 3,
+     "symbol": "trx",
+     "markup": 0,
+     "total": 3
+    }
+   }
+  },
+  "btc": {
+   "symbol": "btc",
+   "active": true,
+   "allow_deposit": true,
+   "allow_withdrawal": true,
+   "withdrawal_fee": 0,
+   "min": 1e-05,
+   "network": "btc",
+   "withdrawal_fees": {
+    "btc": {
+     "value": 5e-05,
+     "symbol": "btc",
+     "markup": 0,
+     "total": 5e-05
+    }
+   }
+  },
+  "eth": {
+   "symbol": "eth",
+   "active": true,
+   "allow_deposit": true,
+   "allow_withdrawal": true,
+   "withdrawal_fee": 0.01,
+   "min": 0.0001,
+   "network": "eth",
+   "withdrawal_fees": {
+    "eth": {
+     "value": 0.0001,
+     "active": true,
+     "symbol": "eth",
+     "markup": 0,
+     "total": 0.0001
+    }
+   }
+  }
+ }
+}
