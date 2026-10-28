@@ -1,0 +1,54 @@
+{
+ "data": [
+  {
+   "name": "Bitcoin",
+   "fa_name": "بیت کوین",
+   "symbol": "BTC",
+   "price": "80,909.4",
+   "toman_amount": 21805083300,
+   "price_round_digit": 1,
+   "amount_round_digit": 6,
+   "changes_24h": 1.58,
+   "changes_7d": 6.508989943795022,
+   "changes_30d": 10.09743155643332
+  },
+  {
+   "name": "Tether",
+   "fa_name": "تتر",
+   "symbol": "USDT",
+   "price": "1.00",
+   "toman_amount": 269500,
+   "price_round_digit": 2,
+   "amount_round_digit": 2,
+   "changes_24h": 0,
+   "changes_7d": 0,
+   "changes_30d": 0
+  },
+  {
+   "name": "Ethereum",
+   "fa_name": "اتریوم",
+   "symbol": "ETH",
+   "price": "2,353.62",
+   "toman_amount": 634300590,
+   "price_round_digit": 2,
+   "amount_round_digit": 5,
+   "changes_24h": 2.16,
+   "changes_7d": 8.763789945935514,
+   "changes_30d": 21.681431438009863
+  },
+  {
+   "name": "Tron",
+   "fa_name": "ترون",
+   "symbol": "TRX",
+   "price": "0.3313",
+   "toman_amount": 89285.34999999999,
+   "price_round_digit": 4,
+   "amount_round_digit": 2,
+   "changes_24h": 0.85,
+   "changes_7d": 1.4966401954795234,
+   "changes_30d": 4.250764525993874
+  }
+ ],
+ "status": true,
+ "message": ""
+}

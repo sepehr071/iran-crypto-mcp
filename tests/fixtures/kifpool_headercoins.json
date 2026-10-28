@@ -1,0 +1,65 @@
+{
+ "data": {
+  "coinList": {
+   "coins": [
+    {
+     "faName": "بیت کوین",
+     "price": 80914.62,
+     "priceChangePercent": 1.549,
+     "slug": "bitcoin-BTC",
+     "nameId": "bitcoin",
+     "symbol": "BTC",
+     "__typename": "CoinDetailType",
+     "name": "Bitcoin",
+     "priceSellIRT": 21887404710
+    },
+    {
+     "faName": "اتریوم",
+     "price": 2353.71,
+     "priceChangePercent": 2.1,
+     "slug": "ethereum-eth",
+     "nameId": "ethereum",
+     "symbol": "ETH",
+     "__typename": "CoinDetailType",
+     "name": "Ethereum",
+     "priceSellIRT": 636678555
+    },
+    {
+     "faName": "تتر",
+     "price": 1,
+     "priceChangePercent": 0,
+     "slug": "tether-usdt",
+     "nameId": "tether",
+     "symbol": "USDT",
+     "__typename": "CoinDetailType",
+     "name": "Tether",
+     "priceSellIRT": null
+    },
+    {
+     "faName": "ریپل",
+     "price": 1.3261,
+     "priceChangePercent": 2.188,
+     "slug": "ripple-xrp",
+     "nameId": "ripple",
+     "symbol": "XRP",
+     "__typename": "CoinDetailType",
+     "name": "XRP",
+     "priceSellIRT": 358710.05
+    },
+    {
+     "faName": "یو اس دی کوین",
+     "price": 1.00117,
+     "priceChangePercent": -0.02,
+     "slug": "usd-coin-usdc",
+     "nameId": "usd-coin",
+     "symbol": "USDC",
+     "__typename": "CoinDetailType",
+     "name": "USD Coin",
+     "priceSellIRT": 270816.485
+    }
+   ],
+   "total": 1305,
+   "__typename": "CoinListType"
+  }
+ }
+}

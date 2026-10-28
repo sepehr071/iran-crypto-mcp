@@ -30,6 +30,13 @@ ROUTES = {
     "/v2/ticker/all": "exir_ticker_all.json",
     "/v2/orderbooks": "exir_orderbook.json",
     "/v2/trades": "exir_trades.json",
+    "/api/v2/manager/coins": "abantether_coins.json",
+    "/api/graphql": "kifpool_headercoins.json",
+    "/api/v1/asset/otc/tickers": "okex_tickers.json",
+    "/api/v1/asset/otc/tickers/usd": "okex_tickers_usd.json",
+    "/api/v5/currencies": "tetherland_currencies.json",
+    "/api/v3/markets": "bit24_markets.json",
+    "/api/v3/mega-menu-coins": "bit24_otc_quotes.json",
 }
 
 
@@ -78,20 +85,20 @@ async def test_compare_price_normalizes_rial_to_toman(client, up):
     assert by["nobitex"]["price_toman"] == int(fixture("nobitex_stats.json")["stats"]["btc-rls"]["latest"]) / 10
     assert by["tabdeal"]["price_basis"] == "last" and by["tabdeal"]["change_24h_pct"] is not None
     prices = [p["price_toman"] for p in r["prices"]]
-    assert prices == sorted(prices) and r["spread_pct"] < 2
+    assert prices == sorted(prices) and r["spread_pct"] < 5  # fixtures were captured minutes apart; brokers add spread
     assert r["cheapest"] == r["prices"][0]["exchange"] and r["priciest"] == r["prices"][-1]["exchange"]
 
 
 async def test_compare_price_tolerates_one_exchange_down(client, up):
     up["/v1/markets"] = lambda r: httpx.Response(503)
     r = (await client.call_tool("ic_compare_price", {"coin": "USDT"})).structured_content
-    assert set(r["errors"]) == {"wallex"} and len(r["prices"]) == 6
+    assert "wallex" in r["errors"] and len(r["prices"]) + len(r["errors"]) == len(exchanges.EXCHANGES)
     assert 100_000 < r["prices"][0]["price_toman"] < 1_000_000
 
 
 async def test_compare_price_unlisted_coin_is_reported_per_exchange(client, up):
     r = (await client.call_tool("ic_compare_price", {"coin": "NOPE"})).structured_content
-    assert r["prices"] == [] and len(r["errors"]) == 7
+    assert r["prices"] == [] and len(r["errors"]) == len(exchanges.EXCHANGES)
 
 
 async def test_invalid_coin_rejected(client, up):
@@ -131,7 +138,7 @@ async def test_ticker_bitpin_survives_v5_list_down(client, up):
     assert r["price_toman"] > 1e9 and r.get("volume_24h_toman") is None
 
 
-@pytest.mark.parametrize("exchange", sorted(exchanges.EXCHANGES))
+@pytest.mark.parametrize("exchange", sorted(e.id for e in exchanges.EXCHANGES.values() if e.book))
 async def test_orderbook_every_exchange(client, up, exchange):
     r = (
         await client.call_tool("ic_get_orderbook", {"exchange": exchange, "coin": "BTC", "depth": 5})
@@ -231,4 +238,38 @@ async def test_compare_price_reports_a_blocked_exchange(client, up):
     up["/v2/ticker/all"] = lambda r: httpx.Response(403, text="<html>blocked</html>")
     r = (await client.call_tool("ic_compare_price", {"coin": "BTC"})).structured_content
     assert "403" in r["errors"]["exir"] and "other exchanges" in r["errors"]["exir"].lower()
-    assert "exir" not in {p["exchange"] for p in r["prices"]} and len(r["prices"]) == 6
+    assert "exir" not in {p["exchange"] for p in r["prices"]} and len(r["prices"]) == len(exchanges.EXCHANGES) - 1
+
+
+@pytest.mark.parametrize("exchange", ["abantether", "kifpool", "okex", "tetherland", "bit24"])
+async def test_broker_ticker_and_no_orderbook(client, up, exchange):
+    t = (await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": "BTC"})).structured_content
+    assert 1e10 < t["price_toman"] < 1e11  # Toman, not Rial
+    u = (
+        await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": "BTC", "quote": "USDT"})
+    ).structured_content
+    assert 10_000 < u["price_usdt"] < 1_000_000
+    book = await client.call_tool("ic_get_orderbook", {"exchange": exchange, "coin": "BTC"})
+    assert book.is_error and "no order book" in book.content[0].text
+
+
+async def test_okex_orders_inverted_bid_ask_and_uses_mid(client, up):
+    r = (await client.call_tool("ic_get_ticker", {"exchange": "okex", "coin": "BTC"})).structured_content
+    assert r["bid_toman"] <= r["ask_toman"] and r["price_basis"] == "mid"
+
+
+async def test_kifpool_posts_its_persisted_query(client, up):
+    await client.call_tool("ic_get_ticker", {"exchange": "kifpool", "coin": "BTC"})
+    req = next(c for c in up.calls if c.url.path == "/api/graphql")
+    assert req.method == "POST" and b"headerCoins" in req.content
+
+
+async def test_kifpool_changed_feed_is_a_clear_error(client, up):
+    up["/api/graphql"] = {"errors": [{"message": "PersistedQueryNotFound"}]}
+    result = await client.call_tool("ic_get_ticker", {"exchange": "kifpool", "coin": "BTC"})
+    assert result.is_error and "changed its price feed" in result.content[0].text
+
+
+async def test_bit24_usdt_rate_comes_from_the_instant_feed(client, up):
+    r = (await client.call_tool("ic_get_ticker", {"exchange": "bit24", "coin": "USDT"})).structured_content
+    assert 100_000 < r["price_toman"] < 1_000_000

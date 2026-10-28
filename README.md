@@ -10,9 +10,10 @@
 
 # iran-crypto-mcp: Iranian crypto exchanges MCP server for AI agents
 
-**Compare any coin across seven Iranian crypto exchanges, in Toman, from Claude, Cursor or Copilot.**<br>
+**Compare any coin across twelve Iranian crypto exchanges, in Toman, from Claude, Cursor or Copilot.**<br>
 An unofficial, read-only MCP server (model context protocol) for the public market data of [Nobitex](https://nobitex.ir), [Wallex](https://wallex.ir), [Bitpin](https://bitpin.ir), [Ramzinex](https://ramzinex.com),<br>
-[Tabdeal](https://tabdeal.org), [OMPFinex](https://ompfinex.com) and [Exir](https://exir.io): prices, order books, recent trades, candles and top movers.
+[Tabdeal](https://tabdeal.org), [OMPFinex](https://ompfinex.com), [Exir](https://exir.io), [Bit24](https://bit24.cash), [Aban Tether](https://abantether.ir),<br>
+[Kifpool](https://kifpool.me), [OK-EX](https://ok-ex.io) and [Tetherland](https://tetherland.com): prices, order books, recent trades, candles and top movers.
 
 [![PyPI](https://img.shields.io/pypi/v/iran-crypto-mcp?color=2563eb)](https://pypi.org/project/iran-crypto-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/iran-crypto-mcp)](https://pypi.org/project/iran-crypto-mcp/)
@@ -29,7 +30,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 
 ## For AI agents
 
-- **What:** unofficial MCP server for the public market data of 7 Iranian crypto exchanges (Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir).
+- **What:** unofficial MCP server for the public market data of 12 Iranian crypto exchanges and brokers (Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Aban Tether, Kifpool, OK-EX, Tetherland).
 - **Install:** `uvx iran-crypto-mcp` or `claude mcp add iran-crypto -- uvx iran-crypto-mcp`. Transport: stdio. Needs [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python 3.10+).
 - **Auth:** none, no API key or account. Optional `IRAN_CRYPTO_MCP_PROXY` (HTTP proxy URL, or a comma-separated list); system proxy settings are ignored.
 - **Access:** read-only. No login, balances, orders or trading, so no confirmation is needed before calling any tool.
@@ -47,7 +48,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 
 ## What it can do
 
-- Compare one coin's price on all seven exchanges, in Toman or USDT, cheapest first, with the spread
+- Compare one coin's price on all twelve exchanges, in Toman or USDT, cheapest first, with the spread
 - Get a ticker: last price, 24h range and change, volume, and best bid/ask where the exchange publishes them
 - Read order books (up to 20 levels per side) and recent public trades
 - Pull OHLC candles (15m, 1h, 4h, 1d) from Nobitex and Wallex
@@ -76,8 +77,13 @@ Example prompts:
 | Tabdeal | تبدیل | [tabdeal.org](https://tabdeal.org) | Toman | no bid/ask, no volume | yes | yes | no |
 | OMPFinex | او ام پی فینکس | [ompfinex.com](https://ompfinex.com) | Rial | no bid/ask | yes | no | no |
 | Exir | اکسیر | [exir.io](https://exir.io) | Toman | no bid/ask | yes | yes | no |
+| Bit24 | بیت ۲۴ | [bit24.cash](https://bit24.cash) | Toman | no bid/ask | no | no | no |
+| Aban Tether (broker) | آبان تتر | [abantether.ir](https://abantether.ir) | Toman | buy/sell price, no high/low | no | no | no |
+| Kifpool (broker) | کیف پول من | [kifpool.me](https://kifpool.me) | Toman | sell price only; no USDT/IRT | no | no | no |
+| OK-EX (broker) | اوکی اکسچنج | [ok-ex.io](https://ok-ex.io) | Toman | buy/sell price, no high/low | no | no | no |
+| Tetherland (broker) | تترلند | [tetherland.com](https://tetherland.com) | Toman | one price, no high/low | no | no | no |
 
-- All seven support top movers and both quotes: Toman (IRT) and USDT. USDT markets stay in USDT.
+- All twelve give prices in both quotes: Toman (IRT) and USDT. USDT markets stay in USDT.
 - "Full" means last price, bid, ask, 24h high and low, change and volume.
 - Bitpin volume comes from a best-effort second call; if it fails, the ticker has no volume.
 - Exir publishes base volume only, so quote volume is approximated as volume times last price.
@@ -179,7 +185,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 | `ic_compare_price` | One coin's price on every exchange in one call, cheapest first, with the spread (an exchange that fails is reported, not fatal) |
 | `ic_get_ticker` | Live price, best bid and ask, 24h range, change and volume of a coin on one exchange |
 | `ic_get_orderbook` | Top bids and asks (1 to 20 levels) with the spread |
-| `ic_recent_trades` | Latest public trades, newest first (1 to 50; not on OMPFinex) |
+| `ic_recent_trades` | Latest public trades, newest first (1 to 50; Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, Exir) |
 | `ic_candles` | OHLC candles, 15m / 1h / 4h / 1d, up to 100 (Nobitex and Wallex) |
 | `ic_top_movers` | Biggest 24h gainers or losers on one exchange, illiquid coins filtered out (up to 25) |
 
@@ -193,7 +199,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
   iran-crypto-mcp  (runs on your machine)
       │
       │  HTTPS
-      └──────▶  public market-data endpoints of the 7 exchanges
+      └──────▶  public market-data endpoints of the 12 exchanges
 ```
 
 - Runs locally and calls the public endpoints the exchanges' own websites use. No hosted server in between, no API key.
@@ -217,7 +223,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 <summary><b>Is there an API or MCP server for Iranian crypto exchanges?</b></summary>
 
 `iran-crypto-mcp` is an unofficial MCP server with 8 read-only tools over the public endpoints of Nobitex, Wallex,
-Bitpin, Ramzinex, Tabdeal, OMPFinex and Exir. It needs no API key.
+Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Aban Tether, Kifpool, OK-EX and Tetherland. It needs no API key.
 </details>
 
 <details>
@@ -250,8 +256,8 @@ an HTTP proxy with an Iranian exit and retry. System proxy variables are ignored
 <details>
 <summary><b>Why does a ticker have no bid/ask or volume?</b></summary>
 
-Bitpin, Tabdeal, OMPFinex and Exir publish no bid/ask in their ticker feeds, and Tabdeal publishes no volume. Call
-`ic_get_orderbook` for the best bid and ask.
+Bitpin, Tabdeal, OMPFinex, Exir, Bit24 and Tetherland publish no bid/ask in their ticker feeds, and Tabdeal publishes no volume. Call
+`ic_get_orderbook` for the best bid and ask. The brokers (Aban Tether, Kifpool, OK-EX, Tetherland) and Bit24 have no public order book.
 </details>
 
 <details>

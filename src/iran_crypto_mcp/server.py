@@ -13,7 +13,8 @@ from .registry import TOOLS
 
 INSTRUCTIONS = """\
 Unofficial, read-only access to the public market data of Iranian crypto exchanges: Nobitex, Wallex, Bitpin,
-Ramzinex, Tabdeal, OMPFinex and Exir. Nothing here can log in, hold keys, trade or move funds.
+Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, and the instant-swap brokers Aban Tether, Kifpool, OK-EX and Tetherland.
+Nothing here can log in, hold keys, trade or move funds.
 
 Workflow:
 1. ic_list_exchanges (what each exchange offers), ic_list_markets (valid coin symbols).
@@ -25,7 +26,9 @@ Units: every IRT price is returned in Toman. Nobitex, Ramzinex and OMPFinex publ
 by 10 so exchanges compare directly. USDT markets are in USDT. Field names carry the unit (price_toman, price_usdt).
 Coins are upper-case tickers ('BTC'); quote is 'IRT' (default) or 'USDT'. Data is cached for 15 seconds.
 In Persian answers name each exchange by its `name_fa` field (نوبیتکس, والکس, بیت\u200cپین, رمزینکس, تبدیل,
-او ام پی فینکس, اکسیر) and never spell the names yourself.
+او ام پی فینکس, اکسیر, آبان تتر, کیف پول من, اوکی اکسچنج, تترلند, بیت ۲۴) and never spell the names yourself.
+Brokers and Bit24 publish prices only (ic_list_exchanges shows orderbook=false): no order book, trades or candles.
+A broker's bid/ask is its own buy-back/sell price, so its spread is a fee, not market depth.
 Quotes can differ between exchanges for real reasons (fees, liquidity, stale last trade): check the order book
 before treating a spread as an opportunity. A coin an exchange does not list is an error naming ic_list_markets. An exchange can fail alone (HTTP 403 means
 its CDN refuses the caller's network): when `errors` is not empty, name those exchanges and the reason in the answer

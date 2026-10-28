@@ -18,7 +18,20 @@ from .exchanges import EXCHANGES, NAMES_FA, Exchange
 from .http import ApiError
 from .registry import tool
 
-ExchangeId = Literal["nobitex", "wallex", "bitpin", "ramzinex", "tabdeal", "ompfinex", "exir"]
+ExchangeId = Literal[
+    "nobitex",
+    "wallex",
+    "bitpin",
+    "ramzinex",
+    "tabdeal",
+    "ompfinex",
+    "exir",
+    "abantether",
+    "kifpool",
+    "okex",
+    "tetherland",
+    "bit24",
+]
 Quote = Literal["IRT", "USDT"]
 EX = Annotated[ExchangeId, Field(description="Exchange id from ic_list_exchanges, e.g. 'nobitex'")]
 COIN = Annotated[str, Field(description="Coin symbol, e.g. 'BTC', 'ETH', 'USDT' (Tether in Toman), 'TON'")]
@@ -100,7 +113,7 @@ async def ic_list_exchanges() -> dict:
                 "site": e.site,
                 "source_unit": "rial" if e.rial else "toman",
                 "quotes": ["IRT", "USDT"],
-                "orderbook": True,
+                "orderbook": e.book is not None,
                 "trades": e.trades is not None,
                 "candles": e.candles is not None,
             }
@@ -179,8 +192,12 @@ async def ic_get_orderbook(
     """Get the top bids and asks of one coin's order book on one exchange, with the spread.
 
     Levels are [price, quantity in coin], best first. Prices are Toman (IRT) or USDT.
+    Not on Bit24 or the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
+    if ex.book is None:
+        have = ", ".join(e.id for e in EXCHANGES.values() if e.book)
+        raise ToolError(f"{ex.name} is an instant-swap broker with no order book. Use {have}.")
     bids, asks = await ex.book(c, quote)
     bids.sort(key=lambda x: -x[0])
     asks.sort(key=lambda x: x[0])
@@ -207,13 +224,12 @@ async def ic_recent_trades(
 ) -> dict:
     """Get the most recent public trades of one coin on one exchange, newest first.
 
-    Not available on OMPFinex. `side` is the taker side when the exchange reports it.
+    Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal and Exir only. `side` is the taker side when the exchange reports it.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.trades is None:
-        raise ToolError(
-            f"{ex.name} has no public trades endpoint here. Use nobitex, wallex, bitpin, ramzinex, tabdeal or exir."
-        )
+        have = ", ".join(e.id for e in EXCHANGES.values() if e.trades)
+        raise ToolError(f"{ex.name} has no public trades endpoint here. Use {have}.")
     rows = sorted(await ex.trades(c, quote), key=lambda t: t["time"], reverse=True)[:limit]
     return {
         "exchange": ex.id,

@@ -47,6 +47,12 @@ SITES = {
     "api-web.tabdeal.org": "https://tabdeal.org",
     "api.ompfinex.com": "https://ompfinex.com",
     "api.exir.io": "https://exir.io",
+    "api.abantether.ir": "https://abantether.ir",
+    "kifpool.me": "https://kifpool.me",
+    "azapi.ok-ex.io": "https://ok-ex.io",
+    "service.tetherland.com": "https://app.tetherland.com",
+    "pro.bit24.cash": "https://pro.bit24.cash",
+    "api.bit24.cash": "https://bit24.cash",
 }
 HOSTS = set(SITES)
 
@@ -134,8 +140,8 @@ def _get_client() -> tuple[httpx.AsyncClient, asyncio.Semaphore]:
     return _client, _limit
 
 
-async def fetch(url: str, params: dict[str, Any] | None = None) -> Any:
-    """GET an endpoint and return the parsed JSON body.
+async def fetch(url: str, params: dict[str, Any] | None = None, json: Any = None) -> Any:
+    """GET an endpoint (POST when `json` is given, for read-only GraphQL queries) and return the parsed JSON body.
 
     Retried up to MAX_RETRIES times on timeout, network error, 5xx or 429, with jittered exponential
     backoff or after Retry-After when sent. 403 is never retried.
@@ -144,14 +150,14 @@ async def fetch(url: str, params: dict[str, Any] | None = None) -> Any:
     host = httpx.URL(url).host
     if host not in HOSTS:
         raise ApiError(f"Refusing to call unexpected host {host}.")
-    key = (url, tuple(sorted(query.items())))
+    key = (url, tuple(sorted(query.items())), json_lib.dumps(json, sort_keys=True))
     if (hit := _cache.get(key)) and time.monotonic() - hit[0] < CACHE_TTL:
         return copy.deepcopy(hit[1])
     for attempt in range(MAX_RETRIES + 1):
         last = attempt == MAX_RETRIES
         wait = RETRY_DELAY * 2**attempt * random.uniform(1, 1.5)
         try:
-            r, content = await _request(url, query, host)
+            r, content = await _request(url, query, host, json)
         except ApiError as e:
             if last or e.status is not None:
                 raise
@@ -178,11 +184,12 @@ def _site_headers(host: str) -> dict[str, str]:
     return {"Origin": SITES[host], "Referer": f"{SITES[host]}/", "sec-fetch-site": "same-site"}
 
 
-async def _send(client, limit, url, query, host) -> tuple[httpx.Response, bytes]:
+async def _send(client, limit, url, query, host, json=None) -> tuple[httpx.Response, bytes]:
     try:
         async with limit:
             await asyncio.sleep(random.uniform(*JITTER))
-            async with client.stream("GET", url, params=query, headers=_site_headers(host)) as r:
+            method = "GET" if json is None else "POST"
+            async with client.stream(method, url, params=query, json=json, headers=_site_headers(host)) as r:
                 return r, await _read_capped(r, host)
     except httpx.TimeoutException as e:
         raise ApiError(f"{host} did not answer in time. Try again in a moment.") from e
@@ -195,9 +202,9 @@ async def _send(client, limit, url, query, host) -> tuple[httpx.Response, bytes]
         ) from e
 
 
-async def _request(url, query, host) -> tuple[httpx.Response, bytes]:
+async def _request(url, query, host, json=None) -> tuple[httpx.Response, bytes]:
     client, limit = _get_client()
-    r, content = await _send(client, limit, url, query, host)
+    r, content = await _send(client, limit, url, query, host, json)
     if r.status_code in (403, 429):
         _next_proxy(client)  # blocked: try the next proxy on the following call
     return r, content

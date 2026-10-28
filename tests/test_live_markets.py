@@ -17,7 +17,7 @@ async def test_live_compare_usdt_rate(client):
     assert 10_000 < r["prices"][0]["price_toman"] < 10_000_000 and r["spread_pct"] < 10
 
 
-@pytest.mark.parametrize("exchange", sorted(EXCHANGES))
+@pytest.mark.parametrize("exchange", sorted(e.id for e in EXCHANGES.values() if e.book))
 async def test_live_orderbook(client, exchange):
     r = (
         await client.call_tool("ic_get_orderbook", {"exchange": exchange, "coin": "BTC", "depth": 3})
@@ -29,6 +29,17 @@ async def test_live_orderbook(client, exchange):
 async def test_live_ticker(client, exchange):
     r = (await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": "ETH"})).structured_content
     assert r["price_toman"] > 0
+
+
+@pytest.mark.parametrize("exchange", sorted(EXCHANGES))
+async def test_live_ticker_usdt_rate(client, exchange):
+    quote = "USDT" if exchange == "kifpool" else "IRT"  # Kifpool lists no USDT/IRT price
+    coin = "BTC" if quote == "USDT" else "USDT"
+    r = (
+        await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": coin, "quote": quote})
+    ).structured_content
+    price = r[f"price_{quote.lower() if quote == 'USDT' else 'toman'}"]
+    assert 10_000 < price < 10_000_000  # USDT in Toman, or BTC in USDT
 
 
 @pytest.mark.parametrize("exchange", ["nobitex", "wallex", "bitpin", "ramzinex", "tabdeal", "exir"])

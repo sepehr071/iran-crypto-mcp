@@ -26,6 +26,23 @@ TABDEAL_WEB = "https://api-web.tabdeal.org/r/plots"
 BITPIN_V5 = "https://api.bitpin.ir/v5/mkt"
 OMP = "https://api.ompfinex.com"
 EXIR = "https://api.exir.io/v2"
+ABAN = "https://api.abantether.ir/api/v2/manager"
+OKEX = "https://azapi.ok-ex.io/api/v1/asset/otc"
+TETHERLAND = "https://service.tetherland.com/api/v5"
+BIT24_PRO = "https://pro.bit24.cash/api/v3"
+BIT24_OTC = "https://api.bit24.cash/api/v3"
+KIFPOOL = "https://kifpool.me/api/graphql"
+# the site's persisted GraphQL query (free-form queries are refused); a frontend redeploy may change the hash
+KIFPOOL_BODY = {
+    "operationName": "headerCoins",
+    "variables": {"search": "", "offset": 0, "limit": 2000},
+    "extensions": {
+        "persistedQuery": {
+            "version": 1,
+            "sha256Hash": "bb149e99c1d2da2ca162085286128da78a9bd3936198e47e28028e20961f6f3c",
+        }
+    },
+}
 
 
 # each exchange's own Persian name, as its website spells it (agents transliterate them wrongly)
@@ -37,6 +54,11 @@ NAMES_FA = {
     "tabdeal": "تبدیل",
     "ompfinex": "او ام پی فینکس",
     "exir": "اکسیر",
+    "abantether": "آبان تتر",
+    "kifpool": "کیف پول من",
+    "okex": "اوکی اکسچنج",
+    "tetherland": "تترلند",
+    "bit24": "بیت ۲۴",
 }
 
 
@@ -349,13 +371,115 @@ async def _exir_trades(coin: str, quote: str):
     return [_trade(t["timestamp"][:19] + "Z", t["price"], t["size"], t["side"]) for t in d]
 
 
+# ---- Aban Tether (Toman; instant-swap broker: tickers only) ----
+
+
+async def _aban_tickers(quote: str) -> dict:
+    out = {}
+    for c in (await fetch(f"{ABAN}/coins"))["data"]:
+        if c.get("coin_type") != "COIN" or not c.get("is_active"):
+            continue  # FUND rows (AST_*BOX) are Aban's own investment boxes, not coins
+        if quote == "IRT":
+            buy, sell = _f(c.get("price_buy")), _f(c.get("price_sell"))
+            if buy:  # bid = what Aban pays (price_sell), ask = what it charges (price_buy)
+                out[c["symbol"].upper()] = _row(
+                    (buy + sell) / 2 if sell else buy, sell, buy, change_pct=c.get("percent_change_24h")
+                )
+        elif _f(c.get("tether_price")):  # one USDT price, no spread; volume24h is already USDT
+            out[c["symbol"].upper()] = _row(
+                c["tether_price"], change_pct=c.get("percent_change_24h"), volume_quote=c.get("volume24h")
+            )
+    return out
+
+
+# ---- Kifpool (Toman; instant-swap broker: tickers only, sell price only) ----
+
+
+async def _kifpool_tickers(quote: str) -> dict:
+    d = (await fetch(KIFPOOL, json=KIFPOOL_BODY)).get("data")
+    if not d:  # a redeployed frontend answers the old persisted-query hash with errors and no data
+        raise ApiError("kifpool changed its price feed; this exchange needs a server update.", 502)
+    out = {}
+    for c in d["coinList"]["coins"]:
+        if quote == "IRT":
+            if c.get("priceSellIRT") is not None:  # the Toman price Kifpool sells at; null for USDT itself
+                out[c["symbol"].upper()] = _row(
+                    c["priceSellIRT"], ask=c["priceSellIRT"], change_pct=c.get("priceChangePercent")
+                )
+        elif c.get("price") is not None:
+            out[c["symbol"].upper()] = _row(c["price"], change_pct=c.get("priceChangePercent"))
+    return out
+
+
+# ---- OK-EX (Toman; OTC broker: tickers only) ----
+
+
+async def _okex_tickers(quote: str) -> dict:
+    out = {}
+    for t in await fetch(f"{OKEX}/tickers" if quote == "IRT" else f"{OKEX}/tickers/usd"):
+        a, b = _f(t.get("buyAmt")), _f(t.get("sellAmt"))
+        if a is None or b is None or not (t.get("allowBuy") or t.get("allowSell")):
+            continue  # disabled coins keep a stale price
+        if quote == "USDT" and t.get("asset") == "USDT":
+            continue
+        # buyAmt/sellAmt are inverted on ~40% of rows, so order them by value; no last price: the tool shows the mid
+        out[t["asset"].upper()] = _row(None, min(a, b), max(a, b), change_pct=t.get("priceChange"))
+    return out
+
+
+# ---- Tetherland (Toman; instant-swap broker: one price per coin) ----
+
+
+async def _tetherland_tickers(quote: str) -> dict:
+    out = {}
+    for c in (await fetch(f"{TETHERLAND}/currencies"))["data"]:
+        coin = str(c.get("symbol") or "").upper()
+        price = _f(str(c.get("toman_amount") if quote == "IRT" else c.get("price")).replace(",", ""))  # "80,909.4"
+        if coin and price and not (quote == "USDT" and coin == "USDT"):
+            out[coin] = _row(price, change_pct=c.get("changes_24h"))
+    return out
+
+
+# ---- Bit24 (Toman; public ticker list only: book and trades need a login) ----
+
+
+async def _bit24_tickers(quote: str) -> dict:
+    url = f"{BIT24_PRO}/markets"
+    first = (await fetch(url, {"per_page": 100, "page": 1}))["data"]  # per_page is capped at 100
+    pages = [first] + [
+        m["data"]
+        for m in await asyncio.gather(
+            *(fetch(url, {"per_page": 100, "page": p}) for p in range(2, first["last_page"] + 1))
+        )
+    ]
+    out = {}
+    for m in (x for page in pages for x in page["results"]):
+        if m["quote_coin"]["symbol"] == quote:
+            s = m.get("market_24h_information") or {}
+            out[m["base_coin"]["symbol"].upper()] = _row(
+                s.get("last_price") or m.get("each_price"),
+                high=s.get("max_price"),
+                low=s.get("min_price"),
+                change_pct=s.get("change_percent"),
+                volume_quote=s.get("quote_volume"),
+            )
+    if quote == "IRT" and "USDT" not in out:  # pro has no USDT/IRT market; the instant-buy feed prices it
+        try:
+            for c in (await fetch(f"{BIT24_OTC}/mega-menu-coins"))["data"]["coins"]:
+                if c["symbol"] == "USDT":
+                    out["USDT"] = _row(c["price_irt"], change_pct=c.get("change"))
+        except ApiError:
+            pass
+    return out
+
+
 class Exchange(NamedTuple):
     id: str
     name: str
     site: str
     rial: bool  # IRT prices come back in Rial; divide by 10 for Toman
     tickers: Callable[[str], Awaitable[dict]]
-    book: Callable[[str, str], Awaitable[tuple]]
+    book: Callable[[str, str], Awaitable[tuple]] | None = None  # None: instant-swap broker, no order book
     trades: Callable[[str, str], Awaitable[list]] | None = None
     candles: Callable[..., Awaitable[list]] | None = None
 
@@ -374,5 +498,10 @@ EXCHANGES = {
         Exchange("tabdeal", "Tabdeal", "tabdeal.org", False, _tabdeal_tickers, _tabdeal_book, _tabdeal_trades),
         Exchange("ompfinex", "OMPFinex", "ompfinex.com", True, _omp_tickers, _omp_book),
         Exchange("exir", "Exir", "exir.io", False, _exir_tickers, _exir_book, _exir_trades),
+        Exchange("abantether", "Aban Tether", "abantether.ir", False, _aban_tickers),
+        Exchange("kifpool", "Kifpool", "kifpool.me", False, _kifpool_tickers),
+        Exchange("okex", "OK-EX", "ok-ex.io", False, _okex_tickers),
+        Exchange("tetherland", "Tetherland", "tetherland.com", False, _tetherland_tickers),
+        Exchange("bit24", "Bit24", "bit24.cash", False, _bit24_tickers),
     )
 }
