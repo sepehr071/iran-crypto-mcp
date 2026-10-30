@@ -32,6 +32,7 @@ ExchangeId = Literal[
     "okex",
     "tetherland",
     "bit24",
+    "balinex",
 ]
 Quote = Literal["IRT", "USDT"]
 EX = Annotated[ExchangeId, Field(description="Exchange id from ic_list_exchanges, e.g. 'nobitex'")]
@@ -173,8 +174,9 @@ async def ic_compare_price(coin: COIN, quote: QUOTE = "IRT") -> dict:
 async def ic_get_ticker(exchange: EX, coin: COIN, quote: QUOTE = "IRT") -> dict:
     """Get the live price, best bid and ask, 24h range, change and volume of one coin on one exchange.
 
-    Bid and ask are missing for Bitpin, Tabdeal, OMPFinex and Exir; volume is missing for Tabdeal. Use
-    ic_get_orderbook for the best bid and ask, ic_candles for price history.
+    Bid and ask are missing for Bitpin, Tabdeal, OMPFinex, Exir and Balinex; volume is missing for Tabdeal. Use
+    ic_get_orderbook for the best bid and ask (not for Balinex, which has no order book here), ic_candles for
+    price history.
     A coin the exchange does not list is an error: check the symbol with ic_list_markets.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
@@ -194,12 +196,12 @@ async def ic_get_orderbook(
     """Get the top bids and asks of one coin's order book on one exchange, with the spread.
 
     Levels are [price, quantity in coin], best first. Prices are Toman (IRT) or USDT.
-    Not on the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
+    Not on the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland) nor on Balinex.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.book is None:
         have = ", ".join(e.id for e in EXCHANGES.values() if e.book)
-        raise ToolError(f"{ex.name} is an instant-swap broker with no order book. Use {have}.")
+        raise ToolError(f"{ex.name} has no order book here (ic_list_exchanges shows orderbook=false). Use {have}.")
     bids, asks = await ex.book(c, quote)
     bids.sort(key=lambda x: -x[0])
     asks.sort(key=lambda x: x[0])
@@ -258,7 +260,7 @@ async def ic_candles(
     """Get recent OHLC candles of one coin on one exchange, oldest first.
 
     Rows are [time, open, high, low, close, volume in coin]; prices are Toman (IRT) or USDT.
-    Nobitex refuses the USDT/IRT candles (use Wallex for those).
+    Nobitex and Balinex have no USDT/IRT candles (use Wallex for those).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.candles is None:
@@ -418,7 +420,7 @@ async def ic_best_deal(
 
     Answers "where do I get the most USDT for 50M Toman?" or "where should I sell 0.2 BTC?". Order-book exchanges are
     walked level by level (filled_pct < 100 means the visible book is too thin); brokers fill at their own buy/sell
-    price; `source: listed_price` (Tetherland) is a single indicative price, ranked last. `receive` is coins for
+    price; `source: listed_price` (Tetherland, Balinex) is a single indicative price, ranked last. `receive` is coins for
     a buy and Toman/USDT for a sell. Trading and withdrawal fees are not deducted:
     check ic_fees before acting. Prices move every second; this is a snapshot, not a quote.
     """
@@ -459,7 +461,7 @@ async def ic_arbitrage(
     min_gap_pct: Annotated[float, Field(ge=0, le=15, description="Smallest gap to report, in percent")] = 1.0,
     min_exchanges: Annotated[
         int,
-        Field(ge=2, le=12, description="Only coins listed on at least this many exchanges (filters obscure tokens)"),
+        Field(ge=2, le=13, description="Only coins listed on at least this many exchanges (filters obscure tokens)"),
     ] = 3,
     limit: Annotated[int, Field(ge=1, le=25, description="Opportunities to return (1-25)")] = 10,
     executable_only: Annotated[

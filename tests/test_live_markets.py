@@ -110,6 +110,14 @@ async def test_live_candles_sane_toman(client, exchange):
     assert lo < rows[-1][4] < hi  # a Rial/Toman mix-up is 10x off
 
 
+async def test_live_balinex_mixed_case_market_has_candles(client):
+    # the chart feed wants the market id as listed (BabyDogeIRT), not BABYDOGEIRT
+    r = (
+        await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "BABYDOGE", "limit": 3})
+    ).structured_content
+    assert r["candles"]
+
+
 async def test_live_fees_usdt(client):
     r = (await client.call_tool("ic_fees", {"coin": "USDT"})).structured_content
     assert len({n["exchange"] for n in r["networks"]}) >= 6, r["errors"]

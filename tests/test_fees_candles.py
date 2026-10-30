@@ -47,6 +47,7 @@ NOW = {
     "exir": 1792029601,  # 2026-10-15T02:00:01Z
     "bit24": 1793170801,
     "abantether": 1793175864,
+    "balinex": 1793289601,
 }
 HARD_CODED = ["ramzinex", "ompfinex", "bit24", "abantether"]
 
@@ -65,7 +66,7 @@ def at(monkeypatch, now: int):
 
 async def test_fees_usdt_rows_from_every_exchange_with_cheapest(client, fees_api):
     r = (await client.call_tool("ic_fees", {"coin": "USDT"})).structured_content
-    assert r["errors"] == {} and r["missing"] == []
+    assert r["errors"] == {} and r["missing"] == ["balinex"]  # Balinex publishes no fee data
     have = {n["exchange"] for n in r["networks"]}
     assert have >= {"nobitex", "wallex", "bitpin", "ramzinex", "tabdeal", "ompfinex", "exir", "bit24", "tetherland"}
     assert all({"network", "withdraw_fee", "min_withdraw", "withdraw", "deposit"} <= set(n) for n in r["networks"])
@@ -87,7 +88,8 @@ async def test_fees_nobitex_usdt_normalises_networks(client, fees_api):
 
 async def test_fees_without_coin_gives_trade_fees_for_all_12(client, fees_api):
     r = (await client.call_tool("ic_fees", {})).structured_content
-    assert set(r["trade_fees_pct"]) == set(exchanges.EXCHANGES) and len(r["trade_fees_pct"]) == 12
+    with_fees = {i for i, e in exchanges.EXCHANGES.items() if e.fees}  # every exchange but Balinex
+    assert set(r["trade_fees_pct"]) == with_fees and len(r["trade_fees_pct"]) == 12
     for t in r["trade_fees_pct"].values():
         assert 0 < t["maker_pct"] < 2 and 0 < t["taker_pct"] < 2  # percent, not a fraction
     assert r["trade_fees_pct"]["wallex"]["taker_pct"] == 0.3 and r["trade_fees_pct"]["tabdeal"]["maker_pct"] == 0.33
@@ -184,3 +186,54 @@ async def test_candles_abantether_raises_api_error_for_other_symbols():
 async def test_candles_bit24_empty_market_is_empty(api):
     api["/api/v3/markets/ohclv"] = {"data": {"message": ""}}
     assert await exchanges.EXCHANGES["bit24"].candles("USDT", "IRT", "60", 0, 2**40) == []
+
+
+@pytest.fixture
+def balinex_api(api):
+    api["/landing/v3/markets/0/500"] = fixture("balinex_markets.json")
+    api["/api/datafeed/history"] = fixture("balinex_candles.json")
+    return api
+
+
+async def test_candles_balinex_toman_oldest_first(client, balinex_api, monkeypatch):
+    at(monkeypatch, NOW["balinex"])
+    r = (await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "BTC", "limit": 100})).structured_content
+    rows = r["candles"]
+    assert len(rows) == 8 and r["columns"][1] == "open_toman"
+    assert [x[0] for x in rows] == sorted({x[0] for x in rows})
+    for _t, o, h, low, c, v in rows:
+        assert 1e10 < o < 1e11 and 1e10 < c < 1e11 and low <= h and v >= 0, rows[0]
+    q = balinex_api.calls[-1]
+    assert q.url.params["symbol"] == "BTCIRT" and q.url.params["resolution"] == "60"
+    assert q.headers["origin"] == "https://app.balinex.com"
+
+
+async def test_candles_balinex_use_the_market_id_not_base_plus_quote(client, balinex_api):
+    # the chart feed is case-sensitive: BABYDOGEIRT has no data, BabyDogeIRT does
+    await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "babydoge", "limit": 3})
+    assert balinex_api.calls[-1].url.params["symbol"] == "BabyDogeIRT"
+    await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "BABYDOGE", "quote": "USDT", "limit": 3})
+    assert balinex_api.calls[-1].url.params["symbol"] == "BabyDogeUSDT"
+
+
+async def test_candles_balinex_usdt_irt_is_refused_without_a_request(client, api):
+    result = await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "USDT"})
+    assert result.is_error and "wallex" in result.content[0].text.lower() and not api.calls
+
+
+async def test_candles_balinex_unknown_coin_is_an_error(client, balinex_api):
+    result = await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "NOPEZZ"})
+    assert result.is_error and "ic_list_markets" in result.content[0].text
+    assert not any(c.url.host == "datafeed.balinex.com" for c in balinex_api.calls)
+
+
+@pytest.mark.parametrize("body", [{"s": "ok"}, [], "oops"])
+async def test_candles_balinex_malformed_feed_is_a_clear_error(client, balinex_api, body):
+    balinex_api["/api/datafeed/history"] = body
+    result = await client.call_tool("ic_candles", {"exchange": "balinex", "coin": "BTC"})
+    assert result.is_error and "changed its chart feed" in result.content[0].text
+
+
+async def test_candles_balinex_no_data_is_empty(balinex_api):
+    balinex_api["/api/datafeed/history"] = {"s": "no_data", "t": [], "o": [], "h": [], "l": [], "c": [], "v": []}
+    assert await exchanges.EXCHANGES["balinex"].candles("BTC", "IRT", "60", 0, 2**40) == []

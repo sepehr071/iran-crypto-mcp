@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 import re
 from collections.abc import Awaitable, Callable
 from datetime import datetime, timezone
@@ -41,6 +42,8 @@ TABDEAL_R = "https://api-web.tabdeal.org/r"
 ABAN_OTC = "https://api.abantether.ir/otc_reporting/tradingview"
 OKEX_API = "https://azapi.ok-ex.io/sno/oapi"
 KIFPOOL = "https://kifpool.me/api/graphql"
+BALINEX = "https://api.balinex.com"
+BALINEX_FEED = "https://datafeed.balinex.com/api/datafeed"
 # Kifpool speaks Apollo's automatic persisted queries: the query text in queries/ hashes to sha256Hash (Apollo's
 # print() with __typename added). The server forgets hashes; a frontend redeploy may change them.
 QUERIES = Path(__file__).parent / "queries"
@@ -91,6 +94,7 @@ NAMES_FA = {
     "okex": "اوکی اکسچنج",
     "tetherland": "تترلند",
     "bit24": "بیت ۲۴",
+    "balinex": "بالینکس",
 }
 
 
@@ -521,6 +525,77 @@ async def _bit24_tickers(quote: str) -> dict:
         except ApiError:
             pass
     return out
+
+
+# ---- Balinex (Toman; tickers and candles only) ----
+
+# the landing site's own market-list request; it pages 20 at a time, 500 per page returns every market in one call.
+# The order book is public only over a websocket (REST needs a login) and trades are not public at all, so neither is
+# offered here.
+BALINEX_BODY = {
+    "sortMarkets": "MOST_VOLUME",
+    "filterLabels": [],
+    "search": "",
+    "favorite": False,
+    "sort": [],
+    "populate": [],
+    "query": [],
+}
+
+
+async def _balinex_markets() -> list[dict]:
+    items: list[dict] = []
+    for page in range(10):  # the cap only guards against a server that ignores the page number
+        d = await fetch(f"{BALINEX}/landing/v3/markets/{page}/500", json=BALINEX_BODY)
+        r = d.get("result") if isinstance(d, dict) else None
+        chunk = r.get("items") if isinstance(r, dict) else None
+        if not isinstance(chunk, list):
+            raise ApiError("balinex changed its market list; this exchange needs a server update.", 502)
+        items += chunk
+        total = _f(r.get("total"))
+        if not chunk or total is None or not len(items) < total:  # no usable total: take this one page
+            break
+    return items
+
+
+def _fin(v: Any) -> float | None:
+    """Like _f, but NaN and Infinity (which the display rounding cannot take) count as missing."""
+    x = _f(v)
+    return x if x is not None and math.isfinite(x) else None
+
+
+async def _balinex_tickers(quote: str) -> dict:
+    # Toman for IRT. The list refreshes about once a minute and has no bid/ask; `price` is that snapshot, not a last
+    # trade. USDT/IRT has a price but no 24h stats (empty strings).
+    # `volume` is the 24h quote volume, `volume24h` the base volume.
+    out = {}
+    for m in await _balinex_markets():
+        if not (isinstance(m, dict) and isinstance(m.get("baseCurrency"), str) and isinstance(m.get("_id"), str)):
+            continue  # one malformed row must not take the whole exchange down
+        price = _fin(m.get("price"))
+        if m.get("quoteCurrency") == quote and m.get("enabled") is not False and price and price > 0:
+            out[m["baseCurrency"].upper()] = _row(
+                price,
+                high=_fin(m.get("highPrice24h")),
+                low=_fin(m.get("lowPrice24h")),
+                change_pct=_fin(m.get("percentChange24h")),
+                volume_quote=_fin(m.get("volume")),
+                symbol=m["_id"],  # the chart feed's symbol is case-sensitive and not always base+quote (BabyDogeIRT)
+            )
+    return out
+
+
+async def _balinex_candles(coin: str, quote: str, resolution: str, start: int, end: int):
+    # Toman for IRT, base volume. USDT/IRT is listed but its chart feed has never had a bar
+    if (coin, quote) == ("USDT", "IRT"):
+        raise ApiError("balinex publishes no candles for USDT/IRT. Use wallex for those.", 404)
+    row = (await _balinex_tickers(quote)).get(coin)
+    if not row:
+        raise ApiError(f"Balinex has no {coin}/{quote} market. Use ic_list_markets to see the listed coins.", 404)
+    try:
+        return await _udf(f"{BALINEX_FEED}/history", row["symbol"], resolution, start, end)
+    except (KeyError, TypeError, AttributeError) as e:  # a body that is not a UDF history answer
+        raise ApiError("balinex changed its chart feed; candles need a server update.", 502) from e
 
 
 # ---- Fees (public fee and network endpoints) and the candles added with them ----
@@ -1084,5 +1159,6 @@ EXCHANGES = {
             _bit24_candles,
             _bit24_fees,
         ),
+        Exchange("balinex", "Balinex", "balinex.com", False, _balinex_tickers, candles=_balinex_candles),
     )
 }
