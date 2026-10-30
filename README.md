@@ -10,9 +10,9 @@
 
 # iran-crypto-mcp: Iranian crypto exchanges MCP server for AI agents
 
-**Compare any coin across twelve Iranian crypto exchanges, in Toman, from Claude, Cursor or Copilot.**<br>
+**Compare any coin across thirteen Iranian crypto exchanges, in Toman, from Claude, Cursor or Copilot.**<br>
 An unofficial, read-only MCP server (model context protocol) for the public market data of [Nobitex](https://nobitex.ir), [Wallex](https://wallex.ir), [Bitpin](https://bitpin.ir), [Ramzinex](https://ramzinex.com),<br>
-[Tabdeal](https://tabdeal.org), [OMPFinex](https://ompfinex.com), [Exir](https://exir.io), [Bit24](https://bit24.cash), [Aban Tether](https://abantether.ir),<br>
+[Tabdeal](https://tabdeal.org), [OMPFinex](https://ompfinex.com), [Exir](https://exir.io), [Bit24](https://bit24.cash), [Balinex](https://balinex.com), [Aban Tether](https://abantether.ir),<br>
 [Kifpool](https://kifpool.me), [OK-EX](https://ok-ex.io) and [Tetherland](https://tetherland.com): prices, order books, recent trades, candles and top movers.
 
 [![PyPI](https://img.shields.io/pypi/v/iran-crypto-mcp?color=2563eb)](https://pypi.org/project/iran-crypto-mcp/)
@@ -31,7 +31,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 
 ## For AI agents
 
-- **What:** unofficial MCP server for the public market data of 12 Iranian crypto exchanges and brokers (Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Aban Tether, Kifpool, OK-EX, Tetherland).
+- **What:** unofficial MCP server for the public market data of 13 Iranian crypto exchanges and brokers (Nobitex, Wallex, Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Balinex, Aban Tether, Kifpool, OK-EX, Tetherland).
 - **Install:** `uvx iran-crypto-mcp` or `claude mcp add iran-crypto -- uvx iran-crypto-mcp`. Transport: stdio. Needs [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python 3.10+).
 - **Auth:** none, no API key or account. Optional `IRAN_CRYPTO_MCP_PROXY` (HTTP proxy URL, or a comma-separated list); system proxy settings are ignored.
 - **Access:** read-only. No login, balances, orders or trading, so no confirmation is needed before calling any tool.
@@ -49,10 +49,10 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 
 ## What it can do
 
-- Compare one coin's price on all twelve exchanges, in Toman or USDT, cheapest first, with the spread
+- Compare one coin's price on all thirteen exchanges, in Toman or USDT, cheapest first, with the spread
 - Get a ticker: last price, 24h range and change, volume, and best bid/ask where the exchange publishes them
 - Read order books (up to 20 levels per side) and recent public trades
-- Pull OHLC candles (15m, 1h, 4h, 1d) from all eight order-book exchanges (and Aban Tether for USDT/IRT)
+- Pull OHLC candles (15m, 1h, 4h, 1d) from all eight order-book exchanges and Balinex (and Aban Tether for USDT/IRT)
 - Rank the biggest 24h gainers and losers on an exchange, with illiquid coins filtered out
 - List the coins an exchange trades against Toman or USDT
 - Find the best exchange for a buy or sell of a given size, walking each order book for slippage
@@ -87,18 +87,20 @@ Example prompts:
 | OMPFinex | او ام پی فینکس | [ompfinex.com](https://ompfinex.com) | Rial | no bid/ask | yes | no | yes |
 | Exir | اکسیر | [exir.io](https://exir.io) | Toman | no bid/ask | yes | yes | yes |
 | Bit24 | بیت ۲۴ | [bit24.cash](https://bit24.cash) | Toman | no bid/ask | yes | yes (no side) | yes |
+| Balinex | بالینکس | [balinex.com](https://balinex.com) | Toman | no bid/ask; no 24h stats for USDT/IRT | no | no | yes (not USDT/IRT) |
 | Aban Tether (broker) | آبان تتر | [abantether.ir](https://abantether.ir) | Toman | buy/sell price, no high/low | no | no | USDT/IRT only (1h+) |
 | Kifpool (broker) | کیف پول من | [kifpool.me](https://kifpool.me) | Toman | sell price only; no USDT/IRT | no | no | no |
 | OK-EX (broker) | اوکی اکسچنج | [ok-ex.io](https://ok-ex.io) | Toman | buy/sell price, no high/low | no | no | no |
 | Tetherland (broker) | تترلند | [tetherland.com](https://tetherland.com) | Toman | one price, no high/low | no | no | no |
 
-- All twelve give prices in both quotes: Toman (IRT) and USDT. USDT markets stay in USDT.
+- All thirteen give prices in both quotes: Toman (IRT) and USDT. USDT markets stay in USDT.
 - "Full" means last price, bid, ask, 24h high and low, change and volume.
 - Bitpin volume comes from a best-effort second call; if it fails, the ticker has no volume.
 - Exir publishes base volume only, so quote volume is approximated as volume times last price.
-- Use `ic_get_orderbook` for the best bid and ask where the ticker lacks them.
+- Use `ic_get_orderbook` for the best bid and ask where the ticker lacks them (not Balinex: it has no order book here).
 - Nobitex refuses USDT/IRT candles (its CDN answers HTTP 403, browsers included): use Wallex for those.
-- `ic_fees`: every exchange has trading fees; all but Aban Tether and OK-EX also publish withdrawal networks and fees. Ramzinex, OMPFinex, Bit24, Aban Tether and Tetherland publish trading fees only on a web page, so those values are fixed in the server (checked 2026-10-28).
+- Balinex is an order-book exchange, but its book is public only over a websocket and its trades not at all, so this server offers neither. Its price list refreshes about once a minute, so its price is a snapshot, not a last trade; `ic_best_deal` ranks it as an indicative listed price and `ic_arbitrage` leaves it out unless `executable_only` is false. Balinex has no USDT/IRT candles (use Wallex).
+- `ic_fees`: every exchange except Balinex (which publishes no fee data) has trading fees; all but Aban Tether and OK-EX also publish withdrawal networks and fees. Ramzinex, OMPFinex, Bit24, Aban Tether and Tetherland publish trading fees only on a web page, so those values are fixed in the server (checked 2026-10-28).
 
 ## Quick start
 
@@ -213,7 +215,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
   iran-crypto-mcp  (runs on your machine)
       │
       │  HTTPS
-      └──────▶  public market-data endpoints of the 12 exchanges
+      └──────▶  public market-data endpoints of the 13 exchanges
 ```
 
 - Runs locally and calls the public endpoints the exchanges' own websites use. No hosted server in between, no API key.
@@ -237,7 +239,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 <summary><b>Is there an API or MCP server for Iranian crypto exchanges?</b></summary>
 
 `iran-crypto-mcp` is an unofficial MCP server with 8 read-only tools over the public endpoints of Nobitex, Wallex,
-Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Aban Tether, Kifpool, OK-EX and Tetherland. It needs no API key.
+Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Balinex, Aban Tether, Kifpool, OK-EX and Tetherland. It needs no API key.
 </details>
 
 <details>
@@ -270,14 +272,14 @@ an HTTP proxy with an Iranian exit and retry. System proxy variables are ignored
 <details>
 <summary><b>Why does a ticker have no bid/ask or volume?</b></summary>
 
-Bitpin, Tabdeal, OMPFinex, Exir, Bit24 and Tetherland publish no bid/ask in their ticker feeds, and Tabdeal publishes no volume. Call
-`ic_get_orderbook` for the best bid and ask. The brokers (Aban Tether, Kifpool, OK-EX, Tetherland) have no public order book.
+Bitpin, Tabdeal, OMPFinex, Exir, Bit24, Balinex and Tetherland publish no bid/ask in their ticker feeds, and Tabdeal publishes no volume. Call
+`ic_get_orderbook` for the best bid and ask. The brokers (Aban Tether, Kifpool, OK-EX, Tetherland) and Balinex have no order book here.
 </details>
 
 <details>
 <summary><b>Why are there no candles for the brokers?</b></summary>
 
-Instant-swap brokers publish no price history of their own (Aban Tether only for USDT/IRT). Every order-book exchange has candles. Nobitex refuses USDT/IRT candles; use Wallex for those.
+Instant-swap brokers publish no price history of their own (Aban Tether only for USDT/IRT). Every order-book exchange has candles, and so does Balinex. Nobitex and Balinex have no USDT/IRT candles; use Wallex for those.
 </details>
 
 <details>

@@ -70,6 +70,10 @@ SITES: dict[str, tuple[str, str, str, dict[str, str | None]]] = {
     # the site also sends os-name/app-version headers derived from its UA; ours is Chrome on macOS, so they are left out
     "pro.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),
     "api.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),
+    # Balinex: the market list is called by the landing site (axios), the chart feed by the trading app (checked
+    # 2026-10-29: neither needs a login)
+    "api.balinex.com": ("https://www.balinex.com", "same-site", AXIOS, {}),
+    "datafeed.balinex.com": ("https://app.balinex.com", "same-site", "*/*", {}),
 }
 HOSTS = set(SITES)
 
