@@ -34,9 +34,9 @@ ExchangeId = Literal[
     "bit24",
 ]
 Quote = Literal["IRT", "USDT"]
-EX = Annotated[ExchangeId, Field(description="Exchange id from ic_list_exchanges, e.g. 'nobitex'")]
-COIN = Annotated[str, Field(description="Coin symbol, e.g. 'BTC', 'ETH', 'USDT' (Tether in Toman), 'TON'")]
-QUOTE = Annotated[Quote, Field(description="Quote currency: 'IRT' = Toman market (default), 'USDT' = Tether market")]
+EX = Annotated[ExchangeId, Field(description="Exchange id, e.g. 'nobitex'")]
+COIN = Annotated[str, Field(description="Coin symbol, e.g. 'BTC', 'USDT'")]
+QUOTE = Annotated[Quote, Field(description="'IRT' = Toman market, 'USDT' = Tether market")]
 
 RESOLUTIONS = {"15m": "15", "1h": "60", "4h": "240", "1d": "D"}
 SECONDS = {"15m": 900, "1h": 3600, "4h": 14400, "1d": 86400}
@@ -100,10 +100,7 @@ def _view(ex: Exchange, quote: str, row: dict) -> dict:
 
 @tool("List Exchanges")
 async def ic_list_exchanges() -> dict:
-    """List the supported Iranian crypto exchanges, their native price unit and what each can answer.
-
-    Start here. Every price this server returns is already converted to Toman (IRT markets) or is in USDT.
-    """
+    """List the supported Iranian crypto exchanges, their native price unit and what each can answer."""
     return {
         "note": "IRT prices are Toman. Nobitex, Ramzinex and OMPFinex publish Rial; this server divides by 10.",
         "exchanges": [
@@ -126,10 +123,7 @@ async def ic_list_exchanges() -> dict:
 
 @tool("List Markets")
 async def ic_list_markets(exchange: EX, quote: QUOTE = "IRT") -> dict:
-    """List the coins an exchange trades against Toman (IRT) or USDT.
-
-    Use it to check a coin symbol before calling the other tools.
-    """
+    """List the coins an exchange trades against Toman (IRT) or USDT, to check a symbol."""
     ex = EXCHANGES[exchange]
     coins = sorted(await ex.tickers(quote))
     return {"exchange": ex.id, "quote": quote, "count": len(coins), "coins": coins}
@@ -139,10 +133,8 @@ async def ic_list_markets(exchange: EX, quote: QUOTE = "IRT") -> dict:
 async def ic_compare_price(coin: COIN, quote: QUOTE = "IRT") -> dict:
     """Compare one coin's price on every supported exchange in one call, cheapest first, with the spread.
 
-    Prices are normalized to Toman (IRT) or USDT. Use coin='USDT' with quote='IRT' for the Tether rate in Toman.
-    An exchange that is down, blocks the caller's network or does not list the coin appears under `errors`; the rest
-    are still compared. Always tell the user which exchanges are missing and why.
-    To check a spread is real, call ic_get_orderbook on the cheapest and the priciest exchange next.
+    coin='USDT' with quote='IRT' is the Tether rate in Toman. Exchanges that fail or do not list the coin appear under
+    `errors`; the rest are still compared. To check a spread is real, call ic_get_orderbook on the cheapest and priciest.
     """
     c, u = _coin(coin), _unit(quote)
     exs = list(EXCHANGES.values())
@@ -173,9 +165,7 @@ async def ic_compare_price(coin: COIN, quote: QUOTE = "IRT") -> dict:
 async def ic_get_ticker(exchange: EX, coin: COIN, quote: QUOTE = "IRT") -> dict:
     """Get the live price, best bid and ask, 24h range, change and volume of one coin on one exchange.
 
-    Bid and ask are missing for Bitpin, Tabdeal, OMPFinex and Exir; volume is missing for Tabdeal. Use
-    ic_get_orderbook for the best bid and ask, ic_candles for price history.
-    A coin the exchange does not list is an error: check the symbol with ic_list_markets.
+    Bid and ask are missing for Bitpin, Tabdeal, OMPFinex and Exir; volume is missing for Tabdeal.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     v = _view(ex, quote, await _ticker(ex, c, quote))
@@ -189,12 +179,11 @@ async def ic_get_orderbook(
     exchange: EX,
     coin: COIN,
     quote: QUOTE = "IRT",
-    depth: Annotated[int, Field(ge=1, le=20, description="Levels per side (1-20)")] = 10,
+    depth: Annotated[int, Field(ge=1, le=20, description="Levels per side")] = 10,
 ) -> dict:
     """Get the top bids and asks of one coin's order book on one exchange, with the spread.
 
-    Levels are [price, quantity in coin], best first. Prices are Toman (IRT) or USDT.
-    Not on the instant-swap brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
+    Levels are [price, quantity in coin], best first. Not on the brokers (Aban Tether, Kifpool, OK-EX, Tetherland).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.book is None:
@@ -222,11 +211,11 @@ async def ic_recent_trades(
     exchange: EX,
     coin: COIN,
     quote: QUOTE = "IRT",
-    limit: Annotated[int, Field(ge=1, le=50, description="Trades to return (1-50)")] = 20,
+    limit: Annotated[int, Field(ge=1, le=50, description="Trades to return")] = 20,
 ) -> dict:
     """Get the most recent public trades of one coin on one exchange, newest first.
 
-    Order-book exchanges except OMPFinex. `side` is the taker side when the exchange reports it.
+    Order-book exchanges except OMPFinex.
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.trades is None:
@@ -247,18 +236,15 @@ async def ic_recent_trades(
 
 @tool("Price Candles")
 async def ic_candles(
-    exchange: Annotated[
-        ExchangeId, Field(description="Exchange id; ic_list_exchanges shows which have candles (candles: true)")
-    ],
+    exchange: Annotated[ExchangeId, Field(description="Exchange id with candles (see ic_list_exchanges)")],
     coin: COIN,
     quote: QUOTE = "IRT",
     interval: Annotated[Literal["15m", "1h", "4h", "1d"], Field(description="Candle size")] = "1h",
-    limit: Annotated[int, Field(ge=1, le=100, description="Most recent candles to return (1-100)")] = 48,
+    limit: Annotated[int, Field(ge=1, le=100, description="Most recent candles")] = 48,
 ) -> dict:
     """Get recent OHLC candles of one coin on one exchange, oldest first.
 
-    Rows are [time, open, high, low, close, volume in coin]; prices are Toman (IRT) or USDT.
-    Nobitex refuses the USDT/IRT candles (use Wallex for those).
+    Rows are [time, open, high, low, close, volume in coin]. Nobitex has no USDT/IRT candles (use Wallex).
     """
     ex, c, u = EXCHANGES[exchange], _coin(coin), _unit(quote)
     if ex.candles is None:
@@ -284,19 +270,18 @@ async def ic_candles(
 async def ic_top_movers(
     exchange: EX,
     quote: QUOTE = "IRT",
-    direction: Annotated[Literal["gainers", "losers"], Field(description="'gainers' or 'losers' over 24h")] = "gainers",
-    limit: Annotated[int, Field(ge=1, le=25, description="Coins to return (1-25)")] = 10,
+    direction: Annotated[Literal["gainers", "losers"], Field(description="Over 24h")] = "gainers",
+    limit: Annotated[int, Field(ge=1, le=25, description="Coins to return")] = 10,
     min_volume: Annotated[
         float | None,
         Field(
-            description="Skip coins with less 24h volume than this, in Toman (IRT) or USDT. Default 100,000,000 Toman or 10,000 USDT. Coins with unknown volume are kept."
+            description="Min 24h volume in Toman (IRT) or USDT. Default 100,000,000 Toman / 10,000 USDT. Unknown volume is kept."
         ),
     ] = None,
 ) -> dict:
     """List the biggest 24h gainers or losers on one exchange, with illiquid coins filtered out.
 
-    Tabdeal publishes no volume, so its coins are not filtered by volume. Pass a mover's `coin` to
-    ic_get_ticker or ic_compare_price for detail.
+    Tabdeal publishes no volume, so it is not volume-filtered.
     """
     ex, u = EXCHANGES[exchange], _unit(quote)
     floor = min_volume if min_volume is not None else (100_000_000 if quote == "IRT" else 10_000)
@@ -404,23 +389,21 @@ async def _deal(ex: Exchange, c: str, quote: str, side: str, amount: float) -> d
 @tool("Best Deal For An Amount")
 async def ic_best_deal(
     coin: COIN,
-    side: Annotated[Literal["buy", "sell"], Field(description="'buy' the coin or 'sell' it")],
+    side: Annotated[Literal["buy", "sell"], Field(description="Buy or sell the coin")],
     amount: Annotated[
         float,
         Field(
             gt=0,
-            description="buy: how much Toman (or USDT) to spend, e.g. 50000000. sell: how many coins to sell, e.g. 0.2",
+            description="buy: Toman (or USDT) to spend, e.g. 50000000. sell: coins to sell, e.g. 0.2",
         ),
     ],
     quote: QUOTE = "IRT",
 ) -> dict:
     """Rank every exchange by what a buy or sell of a given size actually gets, with order-book slippage.
 
-    Answers "where do I get the most USDT for 50M Toman?" or "where should I sell 0.2 BTC?". Order-book exchanges are
-    walked level by level (filled_pct < 100 means the visible book is too thin); brokers fill at their own buy/sell
-    price; `source: listed_price` (Tetherland) is a single indicative price, ranked last. `receive` is coins for
-    a buy and Toman/USDT for a sell. Trading and withdrawal fees are not deducted:
-    check ic_fees before acting. Prices move every second; this is a snapshot, not a quote.
+    Order books are walked level by level (filled_pct < 100: book too thin); brokers fill at their own price;
+    `source: listed_price` (Tetherland) is indicative, ranked last. `receive` is coins for a buy, Toman/USDT for a
+    sell. Fees are not deducted (see ic_fees). A snapshot, not a quote.
     """
     c, u = _coin(coin), _unit(quote)
     exs = list(EXCHANGES.values())
@@ -456,25 +439,21 @@ def _leg(v: dict, u: str, side: str) -> tuple[float | None, str]:
 @tool("Arbitrage Scanner")
 async def ic_arbitrage(
     quote: QUOTE = "IRT",
-    min_gap_pct: Annotated[float, Field(ge=0, le=15, description="Smallest gap to report, in percent")] = 1.0,
+    min_gap_pct: Annotated[float, Field(ge=0, le=15, description="Smallest gap, percent")] = 1.0,
     min_exchanges: Annotated[
         int,
-        Field(ge=2, le=12, description="Only coins listed on at least this many exchanges (filters obscure tokens)"),
+        Field(ge=2, le=12, description="Only coins listed on at least this many exchanges"),
     ] = 3,
-    limit: Annotated[int, Field(ge=1, le=25, description="Opportunities to return (1-25)")] = 10,
+    limit: Annotated[int, Field(ge=1, le=25, description="Opportunities to return")] = 10,
     executable_only: Annotated[
         bool,
-        Field(
-            description="Only real bid/ask prices (default). False also uses exchanges that publish just a last price"
-        ),
+        Field(description="Only real bid/ask prices. False also uses last-price-only exchanges"),
     ] = True,
 ) -> dict:
     """Scan every coin on every exchange for the biggest price gaps: buy where it is cheapest, sell where it is dearest.
 
-    Buy legs use the ask and sell legs the bid; `basis: last` marks an exchange that publishes only a last price, so
-    the gap may not be executable. Gaps over 15% are dropped: they are almost always stale, illiquid markets or two
-    different tokens sharing one symbol.
-    Fees, withdrawal time and network costs are not included: confirm with ic_get_orderbook and ic_fees.
+    Buy legs use the ask, sell legs the bid; `basis: last` means only a last price, so the gap may not be executable.
+    Gaps over 15% are dropped (stale markets or same-symbol tokens). Fees and network costs are not included.
     """
     u = _unit(quote)
     lists, errors = await _all_tickers(quote)
@@ -523,15 +502,14 @@ async def ic_market_overview(
         list[str] | None,
         Field(
             max_length=10,
-            description="Coins to summarize (max 10). Default: USDT, BTC, ETH, BNB, TRX, SOL, XRP, DOGE",
+            description="Coins (max 10). Default: USDT, BTC, ETH, BNB, TRX, SOL, XRP, DOGE",
         ),
     ] = None,
 ) -> dict:
     """Get the key Iranian crypto rates in one call: the Tether rate in Toman and major coins across all exchanges.
 
-    For each coin: the median Toman price over the exchanges that list it, the cheapest and dearest exchange, the
-    median 24h change and how many exchanges answered. Start here for "what is the dollar/Tether rate" or "how is
-    the market today". Use ic_compare_price for every exchange's price of one coin.
+    Per coin: median Toman price, cheapest and dearest exchange, median 24h change, exchange count. Start here for the
+    Tether rate or "how is the market today".
     """
     wanted = [_coin(c) for c in coins] if coins else ["USDT", "BTC", "ETH", "BNB", "TRX", "SOL", "XRP", "DOGE"]
     lists, errors = await _all_tickers("IRT")
@@ -565,18 +543,14 @@ async def ic_market_overview(
 async def ic_fees(
     coin: Annotated[
         str | None,
-        Field(description="Coin to compare withdrawals for, e.g. 'USDT'. Omit for trading fees only"),
+        Field(description="Coin for withdrawals, e.g. 'USDT'. Omit for trading fees only"),
     ] = None,
-    network: Annotated[
-        str | None, Field(description="Only this network, e.g. 'TRC20', 'BEP20', 'ERC20', 'TON' (needs coin)")
-    ] = None,
+    network: Annotated[str | None, Field(description="Only this network, e.g. 'TRC20' (needs coin)")] = None,
 ) -> dict:
     """Compare trading fees and, for one coin, each exchange's withdrawal networks, fees and minimums.
 
-    Answers "which exchange has the cheapest USDT withdrawal on TRC20?" or "what is the trading fee on Wallex?".
-    Trading fees are the entry level (level 1) for Toman markets, in percent; volume tiers lower them. Withdrawal fees
-    and minimums are in coin units. `withdraw: false` means that network is closed right now. `cheapest` names the
-    lowest open withdrawal fee per network. Exchanges that publish no fee data are listed under `missing`.
+    Trading fees are level 1 for Toman markets, in percent. Withdrawal fees and minimums are in coin units;
+    `withdraw: false` = network closed now; `cheapest` = lowest open fee per network; `missing` = no fee data.
     """
     c = _coin(coin) if coin else None
     net = network.upper().replace("-", "") if network else None
