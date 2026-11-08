@@ -34,6 +34,8 @@ async def test_live_ticker(client, exchange):
 @pytest.mark.parametrize("exchange", sorted(EXCHANGES))
 async def test_live_ticker_usdt_rate(client, exchange):
     quote = "USDT" if exchange == "kifpool" else "IRT"  # Kifpool lists no USDT/IRT price
+    if exchange == "balinex":
+        pytest.skip("Balinex lists no USDT/IRT market")
     coin = "BTC" if quote == "USDT" else "USDT"
     r = (
         await client.call_tool("ic_get_ticker", {"exchange": exchange, "coin": coin, "quote": quote})
