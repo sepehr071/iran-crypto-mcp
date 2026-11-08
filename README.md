@@ -188,7 +188,7 @@ It is a standard stdio MCP server: run `uvx iran-crypto-mcp`, or `pip install ir
 
 ## Tools
 
-All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzinex`, `tabdeal`, `ompfinex`, `exir`. `quote` is `IRT` (Toman, default) or `USDT`.
+All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzinex`, `tabdeal`, `ompfinex`, `exir`, `abantether`, `kifpool`, `okex`, `tetherland`, `bit24`, `balinex`. `quote` is `IRT` (Toman, default) or `USDT`.
 
 | Tool | What it does |
 |---|---|
