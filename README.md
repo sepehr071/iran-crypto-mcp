@@ -23,7 +23,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_iran--crypto--mcp-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=iran-crypto&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22iran-crypto-mcp%22%5D%7D)
 
-[For AI agents](#for-ai-agents) · [Why](#why) · [Quick start](#quick-start) · [Exchanges](#supported-exchanges) · [Tools](#tools) · [FAQ](#faq) · [فارسی](#فارسی)
+[For AI agents](#for-ai-agents) · [Why](#why) · [Quick start](#quick-start) · [Exchanges](#supported-exchanges) · [Tools](#tools) · [FAQ](#faq) · [فارسی](#فارسی) · [راهنمای عیب&zwnj;یابی](https://github.com/sepehr071/iran-crypto-mcp/blob/main/docs/claude-code-mcp-troubleshooting.fa.md)
 
 </div>
 
@@ -112,6 +112,8 @@ You need [uv](https://docs.astral.sh/uv/getting-started/installation/). No API k
 ```bash
 claude mcp add iran-crypto -- uvx iran-crypto-mcp
 ```
+
+Not showing up in `/mcp`, or marked **Failed**? Follow the step-by-step [Claude Code troubleshooting guide](https://github.com/sepehr071/iran-crypto-mcp/blob/main/docs/claude-code-mcp-troubleshooting.fa.md) (in Persian).
 </details>
 
 <details>
@@ -327,6 +329,8 @@ claude mcp add iran-crypto -- uvx iran-crypto-mcp
 <div dir="rtl">
 
 در Claude Desktop، Cursor و بقیه برنامه&zwnj;ها همان تنظیم بخش [Quick start](#quick-start) را بگذارید.
+
+اگر سرور در Claude Code دیده نمی&zwnj;شود یا وضعیتش Failed است، [راهنمای عیب&zwnj;یابی MCP در Claude Code](https://github.com/sepehr071/iran-crypto-mcp/blob/main/docs/claude-code-mcp-troubleshooting.fa.md) را قدم&zwnj;به&zwnj;قدم دنبال کنید.
 
 **نمونه پرسش&zwnj;ها**
 
