@@ -144,6 +144,8 @@ async def ic_compare_price(coin: COIN, quote: QUOTE = "IRT") -> dict:
     for e, r in zip(exs, results, strict=True):
         if isinstance(r, ApiError):
             errors[e.id] = str(r)
+        elif isinstance(r, Exception):  # one exchange's parser or client bug must not sink the comparison
+            errors[e.id] = f"{e.name} failed ({type(r).__name__})."
         elif isinstance(r, BaseException):
             raise r
         elif (v := _view(e, quote, r))[f"price_{u}"] is None:
@@ -320,6 +322,8 @@ async def _all_tickers(quote: str) -> tuple[dict[str, dict], dict[str, str]]:
     for e, r in zip(exs, results, strict=True):
         if isinstance(r, ApiError):
             errors[e.id] = str(r)
+        elif isinstance(r, Exception):  # one exchange's parser or client bug must not sink the comparison
+            errors[e.id] = f"{e.name} failed ({type(r).__name__})."
         elif isinstance(r, BaseException):
             raise r
         else:
@@ -413,6 +417,8 @@ async def ic_best_deal(
     for e, r in zip(exs, results, strict=True):
         if isinstance(r, ApiError):
             errors[e.id] = str(r)
+        elif isinstance(r, Exception):  # one exchange's parser or client bug must not sink the comparison
+            errors[e.id] = f"{e.name} failed ({type(r).__name__})."
         elif isinstance(r, BaseException):
             raise r
         else:

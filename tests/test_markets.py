@@ -105,6 +105,21 @@ async def test_compare_price_tolerates_one_exchange_down(client, up):
     assert 100_000 < r["prices"][0]["price_toman"] < 1_000_000
 
 
+async def test_compare_price_survives_an_exchange_raising_a_plain_exception(client, up, monkeypatch):
+    from iran_crypto_mcp import markets
+
+    real = markets._ticker
+
+    async def flaky(ex, coin, quote):
+        if ex.id == "wallex":
+            raise httpx.ReadTimeout("")  # empty message, not an ApiError
+        return await real(ex, coin, quote)
+
+    monkeypatch.setattr(markets, "_ticker", flaky)
+    r = (await client.call_tool("ic_compare_price", {"coin": "USDT"})).structured_content
+    assert "ReadTimeout" in r["errors"]["wallex"] and r["prices"]
+
+
 async def test_compare_price_unlisted_coin_is_reported_per_exchange(client, up):
     r = (await client.call_tool("ic_compare_price", {"coin": "NOPE"})).structured_content
     assert r["prices"] == [] and len(r["errors"]) == len(exchanges.EXCHANGES)

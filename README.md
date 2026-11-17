@@ -18,7 +18,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 [![PyPI](https://img.shields.io/pypi/v/iran-crypto-mcp?color=2563eb)](https://pypi.org/project/iran-crypto-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/iran-crypto-mcp)](https://pypi.org/project/iran-crypto-mcp/)
 [![CI](https://github.com/sepehr071/iran-crypto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sepehr071/iran-crypto-mcp/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-c2410c)](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE)
 [![mcpfarsi](https://mcpfarsi.ir/badge/iran-crypto.svg)](https://mcpfarsi.ir/servers/iran-crypto/)
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_iran--crypto--mcp-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=iran-crypto&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22iran-crypto-mcp%22%5D%7D)
@@ -371,6 +371,10 @@ access, no trading. Prices are informational, not financial advice, and the endp
 
 Built and maintained by **Sepehr Radmard** (سپهر رادمرد). Connect on [LinkedIn](https://www.linkedin.com/in/sepehr-radmard) or follow [@sepehr071 on GitHub](https://github.com/sepehr071) for more MCP servers for Iranian websites, all listed in [iran-mcp](https://github.com/sepehr071/iran-mcp). If this saves you time, a star on the repo helps other people find it.
 
-## License
+## مجوز استفاده (License)
 
-[MIT](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE)
+<a href="https://www.linkedin.com/in/sepehr-radmard"><img src="https://raw.githubusercontent.com/sepehr071/iran-mcp/main/assets/license-banner.png" alt="استفادهٔ شخصی و غیرتجاری رایگان است؛ برای استفادهٔ تجاری با سپهر رادمرد تماس بگیرید. Free for personal and non-commercial use; commercial use needs a license." width="100%"></a>
+
+**استفادهٔ شخصی و غیرتجاری رایگان است.** استفاده در شرکت، محصول پولی یا پروژهٔ مشتری به مجوز تجاری نیاز دارد؛ از راه [لینکدین](https://www.linkedin.com/in/sepehr-radmard) یا [گیت&zwnj;هاب](https://github.com/sepehr071) با سپهر رادمرد تماس بگیرید. متن کامل: [PolyForm Noncommercial 1.0.0](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE). نسخه&zwnj;های پیش از 0.5.1 با مجوز MIT منتشر شده&zwnj;اند و همان مجوز را دارند.
+
+Free for personal and non-commercial use under the [PolyForm Noncommercial License 1.0.0](https://github.com/sepehr071/iran-crypto-mcp/blob/main/LICENSE). Using it in a company, a paid product or a client project needs a commercial license: contact Sepehr Radmard on [LinkedIn](https://www.linkedin.com/in/sepehr-radmard) or [GitHub](https://github.com/sepehr071). Versions before 0.5.1 were released under MIT and stay under it.
