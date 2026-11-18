@@ -205,24 +205,6 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 | `ic_fees` | Trading fees per exchange and, for one coin, withdrawal networks, fees and minimums, with the cheapest per network |
 | `ic_market_overview` | Tether rate and major coins in one call: median Toman price, cheapest and dearest exchange, median change |
 
-## How it works
-
-```text
-  AI agent  (Claude, Cursor, Copilot, ...)
-      │
-      │  MCP over stdio
-      ▼
-  iran-crypto-mcp  (runs on your machine)
-      │
-      │  HTTPS
-      └──────▶  public market-data endpoints of the 13 exchanges
-```
-
-- Runs locally and calls the public endpoints the exchanges' own websites use. No hosted server in between, no API key.
-- Uses a Chrome-like HTTP client and sends each exchange's own Origin and Referer, like its website does.
-- Answers are cached for 15 seconds and at most 2 requests run at once. Failed GET requests are retried.
-- Read-only: it never calls account, order or trading endpoints.
-
 ## Good to know
 
 - **Units are normalized.** IRT prices are Toman (Rial exchanges are divided by 10); USDT prices are unchanged. The unit is in the field name: `price_toman`, `price_usdt`.
