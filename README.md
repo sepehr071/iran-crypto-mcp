@@ -13,7 +13,7 @@
 **Compare any coin across thirteen Iranian crypto exchanges, in Toman, from Claude, Cursor or Copilot.**<br>
 An unofficial, read-only MCP server (model context protocol) for the public market data of [Nobitex](https://nobitex.ir), [Wallex](https://wallex.ir), [Bitpin](https://bitpin.ir), [Ramzinex](https://ramzinex.com),<br>
 [Tabdeal](https://tabdeal.org), [OMPFinex](https://ompfinex.com), [Exir](https://exir.io), [Bit24](https://bit24.cash), [Balinex](https://balinex.com), [Aban Tether](https://abantether.ir),<br>
-[Kifpool](https://kifpool.me), [OK-EX](https://ok-ex.io) and [Tetherland](https://tetherland.com): prices, order books, recent trades, candles and top movers.
+[Kifpool](https://kifpool.me), [OK-EX](https://ok-ex.io) and [Tetherland](https://tetherland.ir): prices, order books, recent trades, candles and top movers.
 
 [![PyPI](https://img.shields.io/pypi/v/iran-crypto-mcp?color=2563eb)](https://pypi.org/project/iran-crypto-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/iran-crypto-mcp)](https://pypi.org/project/iran-crypto-mcp/)
@@ -91,7 +91,7 @@ Example prompts:
 | Aban Tether (broker) | آبان تتر | [abantether.ir](https://abantether.ir) | Toman | buy/sell price, no high/low | no | no | USDT/IRT only (1h+) |
 | Kifpool (broker) | کیف پول من | [kifpool.me](https://kifpool.me) | Toman | sell price only; no USDT/IRT | no | no | no |
 | OK-EX (broker) | اوکی اکسچنج | [ok-ex.io](https://ok-ex.io) | Toman | buy/sell price, no high/low | no | no | no |
-| Tetherland (broker) | تترلند | [tetherland.com](https://tetherland.com) | Toman | one price, no high/low | no | no | no |
+| Tetherland (broker) | تترلند | [tetherland.ir](https://tetherland.ir) | Toman | one price, no high/low | no | no | no |
 
 - All thirteen give prices in both quotes: Toman (IRT) and USDT. USDT markets stay in USDT.
 - "Full" means last price, bid, ask, 24h high and low, change and volume.
