@@ -66,7 +66,7 @@ SITES: dict[str, tuple[str, str, str, dict[str, str | None]]] = {
     "api.abantether.ir": ("https://abantether.ir", "same-site", "*/*", {}),
     "kifpool.me": ("https://kifpool.me", "same-origin", "application/graphql-response+json,application/json;q=0.9", {}),
     "azapi.ok-ex.io": ("https://ok-ex.io", "same-site", "*/*", {"Referer": None}),
-    "service.tetherland.com": ("https://app.tetherland.com", "same-site", "application/json", {}),
+    "service.tetherland.ir": ("https://app.tetherland.ir", "same-site", "application/json", {}),
     # the site also sends os-name/app-version headers derived from its UA; ours is Chrome on macOS, so they are left out
     "pro.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),
     "api.bit24.cash": ("https://bit24.cash", "same-site", "*/*", {"Accept-Language": "fa"}),

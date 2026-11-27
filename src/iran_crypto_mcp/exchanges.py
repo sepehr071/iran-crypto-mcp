@@ -32,7 +32,7 @@ OMP = "https://api.ompfinex.com"
 EXIR = "https://api.exir.io/v2"
 ABAN = "https://api.abantether.ir/api/v2/manager"
 OKEX = "https://azapi.ok-ex.io/api/v1/asset/otc"
-TETHERLAND = "https://service.tetherland.com/api/v5"
+TETHERLAND = "https://service.tetherland.ir/api/v5"
 BIT24_PRO = "https://pro.bit24.cash/api/v3"
 BIT24_OTC = "https://api.bit24.cash/api/v3"
 WALLEX_V2 = "https://api.wallex.ir/v2"
@@ -1051,7 +1051,7 @@ async def _tetherland_fees() -> dict:
         0.45,
         0.45,
         "Bronze level, Tetherland market; the USDT/IRT easy swap is 1.7% built into the price, crypto/crypto is free. "
-        f"Trade fee {_hardcoded('tetherland.com/fee')}.",
+        f"Trade fee {_hardcoded('tetherland.ir/fee')}.",
         coins,
     )
 
@@ -1147,7 +1147,7 @@ EXCHANGES = {
         ),
         Exchange("kifpool", "Kifpool", "kifpool.me", False, _kifpool_tickers, fees=_kifpool_fees),
         Exchange("okex", "OK-EX", "ok-ex.io", False, _okex_tickers, fees=_okex_fees),
-        Exchange("tetherland", "Tetherland", "tetherland.com", False, _tetherland_tickers, fees=_tetherland_fees),
+        Exchange("tetherland", "Tetherland", "tetherland.ir", False, _tetherland_tickers, fees=_tetherland_fees),
         Exchange(
             "bit24",
             "Bit24",
