@@ -35,7 +35,7 @@ An unofficial, read-only MCP server (model context protocol) for the public mark
 - **Install:** `uvx iran-crypto-mcp` or `claude mcp add iran-crypto -- uvx iran-crypto-mcp`. Transport: stdio. Needs [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python 3.10+).
 - **Auth:** none, no API key or account. Optional `IRAN_CRYPTO_MCP_PROXY` (HTTP proxy URL, or a comma-separated list); system proxy settings are ignored.
 - **Access:** read-only. No login, balances, orders or trading, so no confirmation is needed before calling any tool.
-- **Tools:** 8, all prefixed `ic_`. Start with `ic_compare_price`. Typical sequence: `ic_compare_price` -> `ic_get_orderbook` -> `ic_candles`.
+- **Tools:** 12, all prefixed `ic_`. Start with `ic_compare_price`. Typical sequence: `ic_compare_price` -> `ic_get_orderbook` -> `ic_candles`.
 - **Use when:** comparing a coin's price across Iranian exchanges, checking a spread, reading an order book or recent trades, or listing 24h movers.
 - **Do not use when:** the user wants to buy, sell or transfer, needs account data, or wants non-Iranian exchanges.
 - **Output:** compact JSON. Every IRT price is in **Toman** (field names say `*_toman`); USDT markets say `*_usdt`.
@@ -188,7 +188,7 @@ It is a standard stdio MCP server: run `uvx iran-crypto-mcp`, or `pip install ir
 
 ## Tools
 
-All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzinex`, `tabdeal`, `ompfinex`, `exir`, `abantether`, `kifpool`, `okex`, `tetherland`, `bit24`, `balinex`. `quote` is `IRT` (Toman, default) or `USDT`.
+All 12 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzinex`, `tabdeal`, `ompfinex`, `exir`, `abantether`, `kifpool`, `okex`, `tetherland`, `bit24`, `balinex`. `quote` is `IRT` (Toman, default) or `USDT`.
 
 | Tool | What it does |
 |---|---|
@@ -220,7 +220,7 @@ All 8 tools are read-only. Exchange ids: `nobitex`, `wallex`, `bitpin`, `ramzine
 <details>
 <summary><b>Is there an API or MCP server for Iranian crypto exchanges?</b></summary>
 
-`iran-crypto-mcp` is an unofficial MCP server with 8 read-only tools over the public endpoints of Nobitex, Wallex,
+`iran-crypto-mcp` is an unofficial MCP server with 12 read-only tools over the public endpoints of Nobitex, Wallex,
 Bitpin, Ramzinex, Tabdeal, OMPFinex, Exir, Bit24, Balinex, Aban Tether, Kifpool, OK-EX and Tetherland. It needs no API key.
 </details>
 
@@ -282,14 +282,15 @@ Use the full path to `uvx` (`where uvx` on Windows, `which uvx` on macOS/Linux) 
 
 <div dir="rtl">
 
-**iran-crypto-mcp** یک سرور MCP غیررسمی و فقط&zwnj;خواندنی برای داده&zwnj;های عمومی بازار صرافی&zwnj;های ارز دیجیتال ایرانی است: نوبیتکس، والکس، بیت&zwnj;پین، رمزینکس، تبدیل، او ام پی فینکس و اکسیر. به دستیار هوش مصنوعی شما (Claude، Cursor، Copilot و ...) اجازه می&zwnj;دهد قیمت یک ارز را در همه صرافی&zwnj;ها به تومان مقایسه کند.
+**iran-crypto-mcp** یک سرور MCP غیررسمی و فقط&zwnj;خواندنی برای داده&zwnj;های عمومی بازار صرافی&zwnj;های ارز دیجیتال ایرانی است: نوبیتکس، والکس، بیت&zwnj;پین، رمزینکس، تبدیل، او ام پی فینکس، اکسیر، بیت ۲۴، بالینکس، آبان تتر، کیف پول من، اوکی اکسچنج و تترلند. به دستیار هوش مصنوعی شما (Claude، Cursor، Copilot و ...) اجازه می&zwnj;دهد قیمت یک ارز را در همه صرافی&zwnj;ها به تومان مقایسه کند.
 
 **چه کارهایی می&zwnj;کند**
 
-- **مقایسه قیمت صرافی&zwnj;ها**: قیمت بیت&zwnj;کوین، تتر و بقیه ارزها در هر هفت صرافی با یک درخواست، از ارزان به گران، همراه با اختلاف قیمت.
+- **مقایسه قیمت صرافی&zwnj;ها**: قیمت بیت&zwnj;کوین، تتر و بقیه ارزها در همهٔ سیزده صرافی و کارگزاری با یک درخواست، از ارزان به گران، همراه با اختلاف قیمت.
 - **قیمت تتر و بیت&zwnj;کوین به تومان**: قیمت صرافی&zwnj;هایی که ریال می&zwnj;دهند تقسیم بر ۱۰ می&zwnj;شود، پس همه عددها قابل مقایسه&zwnj;اند.
-- **دفتر سفارش** (تا ۲۰ سطح)، **معاملات اخیر** و **کندل&zwnj;ها** (۱۵ دقیقه، ۱ ساعت، ۴ ساعت، روزانه؛ فقط نوبیتکس و والکس).
+- **دفتر سفارش** (تا ۲۰ سطح)، **معاملات اخیر** و **کندل&zwnj;ها** (۱۵ دقیقه، ۱ ساعت، ۴ ساعت، روزانه؛ نوبیتکس و بالینکس برای USDT/IRT کندل ندارند).
 - **بیشترین رشد و افت ۲۴ ساعته** هر صرافی، بدون ارزهای کم&zwnj;حجم.
+- **بهترین معامله برای یک مبلغ مشخص**، **اسکن آربیتراژ**، **نمای کلی بازار** و **کارمزدها و شبکه&zwnj;های برداشت** هر صرافی.
 
 **نکته&zwnj;ها**
 
